@@ -1,1 +1,31 @@
 seed-prompt.txt
+
+# Dependencies / env / build — always installed co-located with their project (admin/, CC-Hosting-Public/, etc.), never at repo root (see Execution Plan §3)
+# Node / Next.js
+**/node_modules/
+**/.next/
+**/out/
+**/dist/
+**/build/
+**/.turbo/
+**/.vercel/
+**/coverage/
+.next/
+out/
+dist/
+build/
+node_modules/
+
+# Python
+**/.venv/
+**/venv/
+**/env/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/*.egg-info/
+**/.tox/
+__pycache__/
+.venv/
+venv/
