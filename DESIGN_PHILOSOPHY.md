@@ -35,21 +35,22 @@ Most jersey vendors obscure their kit origins using vague terminology like "Firs
 
 ---
 
-## 4. Frictionless Checkout Philosophy
+## 4. Frictionless Checkout & Intent Persistence
 
-A major source of abandoned carts in Indian e-commerce is mandatory account creation (requiring email verification, passwords, and SMS OTPs). 
+A major source of abandoned carts in Indian e-commerce is mandatory account creation (requiring email verification, passwords, and SMS OTPs) and fragile shopping sessions. 
 
 Crown & Cross eliminates this friction:
-- **No Mandatory Accounts:** Customers browse, pick their size, and checkout in seconds.
-- **Native WhatsApp Integration:** Orders are converted into clean, human-readable WhatsApp messages sent directly to founder Jason Clement (`+91 76959 24602`).
-- **Instant UPI QR Payments:** Standard UPI deep links (`upi://pay?pa=...`) generate instant dynamic QR codes for any UPI app (GPay, PhonePe, Paytm), followed by a simple screenshot confirmation.
+- **No Mandatory Accounts, Yet Zero Data Loss:** Customers browse, pick their size, and checkout in seconds. Shopping intent and customer delivery details persist client-side via scoped local storage (`cc_cart_v1`, `cc_customer_v1`), preventing lost progress across page refreshes or tab switches without requiring server-side sessions.
+- **Direct `wa.me` Relationship Bridge:** Orders are formatted into clean ASCII summaries and routed directly to founder Jason Clement (`+91 76959 24602`) through the modern `wa.me` click-to-chat bridge, eliminating intermediate webview blockers and carrier drops.
+- **Instant UPI QR Payments & Trust Engineering:** Standard UPI deep links generate dynamic QR codes for any UPI app (GPay, PhonePe, Paytm). Bank-traceable order notes (`tn`), reference tracking (`tr`), 1-click Order ID copying, and visible trust badges ensure total payment clarity.
 
 ---
 
-## 5. Universal Ergonomics & The "Zero Dead Link" Law
+## 5. Universal Ergonomics, Developer Experience & The "Zero Dead Link" Law
 
-Software should respect the user's time and device choices:
+Software should respect the user's and developer's time and device choices:
 1. **Device-Agnostic Fluidity:** Whether viewing on an ultrawide desktop monitor, an iPad, or a compact smartphone, every element adapts without horizontal clipping, visual breakage, or overlapping text.
 2. **Intent-Direct Deep Linking:** When a customer clicks to order via WhatsApp, they shouldn't encounter dead ends, empty text boxes, or intermediate website prompts. Native protocols take them straight into the chat with their order already written out.
 3. **Graceful Degradation:** When optional services (like Resend API keys or desktop applications) are unavailable or unconfigured, the UI never crashes or shows a broken state. It automatically detects and offers an immediate, working alternative (e.g. direct WhatsApp estimate dispatch or Web fallback).
-4. **Instant Developer Feedback:** Launching the dev environment (`npm run launch`) doesn't require manually checking terminal ports or opening tabs. The system performs readiness health checks and opens both applications in the browser automatically.
+4. **Developer Ergonomics & Clean Terminal UX:** Launching the dev environment (`npm run launch`) requires zero manual port polling or browser tab management. Custom stream filters strip raw ANSI sequences to keep Windows and Unix terminals clean, while HTTP health checks automatically launch both portals.
+5. **Instant Admin-to-Storefront Validation:** The Admin portal features a direct 1-click "View Store" action, allowing administrators to verify pricing and catalog changes live on the storefront within seconds.

@@ -26,7 +26,7 @@ npm run launch
 ```
 *(Or on Windows, double click `scripts/start.bat`; on macOS/Linux run `bash scripts/start.sh`)*
 
-The launcher executes health-polling readiness checks and **automatically opens your default browser** to both applications once ports are ready:
+The launcher executes health-polling readiness checks, strips ANSI artifacts for crystal-clear terminal output in UTF-8, and **automatically opens your default browser** to both applications once ports are ready:
 - **Admin Portal:** [http://localhost:3000](http://localhost:3000) *(auto-opened)*
 - **Public Storefront:** [http://localhost:3001](http://localhost:3001) *(auto-opened)*
 
@@ -39,35 +39,39 @@ Crown & Cross uses a lean, serverless, no-backend-database architecture:
 ```
 CC-Inventory-Stock/                 (Repo 1 — Private Admin)
 ├── admin/                          Next.js Admin Dashboard (Port 3000)
-│   ├── app/                        App router & UI pages
+│   ├── app/                        App router, Lucide UI tabs & styles
 │   ├── app/api/products/route.js   CRUD & JSON sync API
-│   └── lib/generateJson.js         JSON file read/write layer
+│   ├── components/                 BrandSettings, ShippingExchange, Taxonomy, RawJson
+│   └── lib/generateJson.js         Dynamic root traversal & atomic JSON I/O
 ├── CC-Hosting-Public/               (Repo 2 — Public Git Submodule, Port 3001)
 │   ├── ...                          (Vercel Next.js storefront)
 │   └── public/data/products.json    <-- Admin directly writes here
 ├── scripts/
-│   ├── start.js                    Cross-platform Node launcher
-│   ├── start.bat                   Windows double-click launcher
+│   ├── start.js                    Cross-platform Node launcher (ANSI-stripped, HTTP polled)
+│   ├── start.bat                   Windows UTF-8 clean launcher wrapper
 │   └── start.sh                    Mac/Linux launcher
 └── package.json
 ```
 
 ### How the Data Hand-Off Works:
 1. **Admin CRUD**: When you add, edit, or toggle stock in the Admin UI, the API directly updates `CC-Hosting-Public/public/data/products.json`.
-2. **Submodule Git Commit**: Commit the updated `products.json` inside `CC-Hosting-Public` and push to its GitHub repository.
-3. **Vercel Auto-Deploy**: Vercel is connected solely to `CC-Hosting-Public` — every push automatically triggers a fresh deployment of the public store within 60 seconds.
+2. **Instant Preview ("View Store")**: An integrated header button in the Admin portal provides 1-click navigation to the live storefront on port 3001.
+3. **Submodule Git Commit**: Commit the updated `products.json` inside `CC-Hosting-Public` and push to its GitHub repository.
+4. **Vercel Auto-Deploy**: Vercel is connected solely to `CC-Hosting-Public` — every push automatically triggers a fresh deployment of the public store within 60 seconds.
+5. **Persistent Storefront Shopping**: Customers on the storefront experience zero-loss shopping sessions via client-side scoped local storage (`cc_cart_v1`, `cc_customer_v1`) without database latency or login barriers.
 
 ---
 
 ## ✨ Comprehensive Admin Modules
 
-The Crown & Cross Admin Portal (`http://localhost:3000`) provides comprehensive control over all data stored in `products.json`:
+The Crown & Cross Admin Portal (`http://localhost:3000`) provides comprehensive control over all data stored in `products.json`, enhanced with a modern Lucide icon design system:
 
 1. **👕 Jerseys & Inventory Catalog**:
    - Add, edit, and delete football jerseys with multi-image previews and size tags (`S`, `M`, `L`, `XL`, `XXL`).
    - Inline stock status toggle (`In Stock`, `Low Stock`, `Out of Stock`) and quantity tracking.
    - Dynamic KPI counters: Total jerseys, active stock, sold-out alerts, and aggregate retail valuation (₹).
    - Real-time search and multi-facet filtering by category, quality grade, and stock level.
+   - "View Store" header button with Lucide external link icon for instantaneous catalog validation.
 
 2. **🏛️ Brand & Store Identity**:
    - Store Name, primary hero tagline, and secondary story value proposition.
@@ -90,8 +94,9 @@ The Crown & Cross Admin Portal (`http://localhost:3000`) provides comprehensive 
    - One-click `.json` snapshot download for manual backups.
 
 6. **📲 Universal WhatsApp Engine**:
-   - Integrated cross-platform deep-linking (`whatsapp://send` + `api.whatsapp.com`).
+   - Integrated cross-platform deep-linking (`whatsapp://send` and modern `https://wa.me/` bridge).
    - Automatically pre-types order details, itemized quality tiers, and customer address for 1-click dispatch across Windows, macOS, Android, and iOS (iPhone/iPad).
+   - Clean ASCII formatting prevents mobile browser character truncation.
 
 7. **📱 Full Responsive Multi-Screen Compatibility**:
    - **Large Screens (Desktop & 4K):** Max-width constraints and clamp-based fluid typography.

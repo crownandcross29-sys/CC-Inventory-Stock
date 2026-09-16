@@ -11,19 +11,24 @@ CC-Inventory-Stock/
 ├── admin/
 │   ├── app/
 │   │   ├── api/products/route.js    # Next.js App Router API endpoint
-│   │   ├── globals.css              # Olive Green & Gold design tokens
+│   │   ├── globals.css              # Olive Green & Gold design tokens & Lucide styles
 │   │   ├── layout.jsx               # Root HTML & metadata wrapper
-│   │   └── page.jsx                 # Client-side Admin Dashboard & CRUD UI
+│   │   └── page.jsx                 # Client-side Admin Dashboard, CRUD UI & Storefront link
+│   ├── components/
+│   │   ├── BrandSettingsTab.jsx     # Store name, WhatsApp, UPI & brand identity
+│   │   ├── ShippingExchangeTab.jsx  # Delivery rules, thresholds & return policies
+│   │   ├── TaxonomyTab.jsx          # Categories & quality tiers management
+│   │   └── RawJsonTab.jsx           # Live JSON syntax editor, validator & backup exporter
 │   ├── lib/
-│   │   └── generateJson.js          # File I/O & data formatting layer
+│   │   └── generateJson.js          # Dynamic root traversal, file I/O & data formatting
 │   ├── public/
 │   │   └── images/logo.jpeg         # Crown & Cross brand emblem
 │   └── package.json                 # Admin project manifest
 ├── CC-Hosting-Public/               # Git submodule (Public Storefront repo)
 │   └── public/data/products.json    # Target data contract
 ├── scripts/
-│   ├── start.js                     # Unified Node.js child_process launcher
-│   ├── start.bat                    # Windows shell launcher wrapper
+│   ├── start.js                     # Unified Node.js launcher with ANSI filtering & HTTP health checks
+│   ├── start.bat                    # Windows shell launcher wrapper with UTF-8 code page
 │   └── start.sh                     # Unix/macOS shell launcher wrapper
 ├── .gitignore                       # Multi-tier ignore rules
 ├── package.json                     # Root orchestrator manifest
@@ -109,14 +114,17 @@ const jsonFilePath = getJsonFilePath();
 
 ---
 
-## 5. Launcher Architecture: `scripts/start.js`
+## 5. Launcher Architecture: `scripts/start.js` & `scripts/start.bat`
 
-Uses Node.js `child_process.spawn` to coordinate both Next.js applications in a non-blocking cross-platform manner:
-- **Node v24 Windows Compatibility:** Dispatches using `npx.cmd` and `{ shell: true }` on Windows (`win32`) to prevent Node v24 `EINVAL` spawn errors.
+Coordinates both Next.js applications in a non-blocking cross-platform manner:
+- **Clean Windows Console Output:** `scripts/start.bat` initializes UTF-8 mode (`chcp 65001 >nul`) and clears the screen.
+- **ANSI Code Sanitization:** `scripts/start.js` intercepts `child.stdout` and `child.stderr` through custom stream parsers that strip ANSI escapes (`\u001b\[...`), cursor positioning controls, and unprintable byte noise.
+- **Color & Spinner Control:** Injects `FORCE_COLOR: "0"` and `CI: "1"` into child environments to prevent Next.js interactive spinners from scrambling terminal rows.
+- **Node v24 Windows Compatibility:** Spawns commands with `{ shell: true }` on `win32` to eliminate Node v24 `EINVAL` spawn errors.
 - **Port Allocation:** Spawns `Admin` on `http://localhost:3000` and `Storefront` on `http://localhost:3001`.
-- **HTTP Health Polling (`checkPortReady`):** Periodically issues lightweight HTTP requests to `localhost:3000` and `localhost:3001`.
-- **Automated Browser Opener (`openBrowser`):** Once both servers return HTTP 200 responses, automatically launches the default web browser to both portals via `start` (Windows), `open` (macOS), or `xdg-open` (Linux).
-- **Process Cleanup:** Registers a `SIGINT` listener to gracefully terminate all child processes and port bindings upon pressing `Ctrl + C`.
+- **HTTP Health Polling (`waitForUrlAndOpen`):** Periodically tests endpoints via lightweight Node `http.get` requests.
+- **Automated Staggered Browser Opener (`openBrowser`):** Automatically opens default browser tabs (immediate for Admin, 800ms offset for Storefront) once each respective server returns an active HTTP status.
+- **Process Cleanup:** Handles `SIGINT` and `SIGTERM` signals with aggressive process tree destruction (`taskkill /pid <PID> /T /F` on Windows) to prevent orphaned Node/port instances.
 
 ---
 
@@ -141,13 +149,13 @@ Add these in **Vercel Dashboard** → `CC-Hosting-Public` → **Settings** → *
 
 Provides unified deep-linking that guarantees pre-filled recipient phone (`+91 76959 24602`) and pre-typed order messages across all client operating systems:
 
-- **Protocol Launching (`whatsapp://send`):**
-  - Directly opens native WhatsApp applications on Windows, macOS, Android, and iOS (iPhone/iPad).
-  - Bypasses intermediate landing pages that require extra clicks.
-- **Universal Link Fallback (`api.whatsapp.com/send`):**
-  - Uses official universal endpoint without `app_absent=0` parameter (which was disabling autoload).
-  - Automatically falls back to WhatsApp Web in desktop browsers if the native application is not installed.
-- **Message Sanitization (`sanitizeWhatsAppText`):**
+- **Protocol Scheme (`whatsapp://send`):**
+  - Directly invokes native WhatsApp applications on Windows, macOS, Android, and iOS (iPhone/iPad).
+  - Bypasses intermediate browser landing prompts.
+- **Universal Click-to-Chat Fallback (`https://wa.me/`):**
+  - Direct Meta click-to-chat bridge replacing legacy `api.whatsapp.com`.
+  - Ensures clean desktop tab reuse and reliable mobile webview fallback without dropped parameters.
+- **Text Sanitization (`sanitizeWhatsAppText`):**
   - Converts multi-byte Unicode box characters (`━`, `─`, `═`) into standard ASCII hyphens (`-`).
   - Prevents query parameter truncation and URL decoding failures across mobile browser intent handlers.
 
@@ -159,3 +167,4 @@ Provides unified deep-linking that guarantees pre-filled recipient phone (`+91 7
 2. **Fluid Grids:** Replaced fixed minimums with fluid constraints: `repeat(auto-fit, minmax(min(100%, 280px), 1fr))` on catalog, PDP, and footer sections.
 3. **Gesture Navigation:** `JerseyCarousel.jsx` features touch swipe listeners (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with a 45px distance threshold.
 4. **Adaptive Modals:** `UpiModal.jsx` incorporates `maxHeight: '90vh'` and `overflowY: 'auto'` to maintain usability on compact and landscape mobile screens.
+5. **Scroll Management:** Route change scroll-to-top resets and sticky header anchor scroll margins prevent content occlusion.
