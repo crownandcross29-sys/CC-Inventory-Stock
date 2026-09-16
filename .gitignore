@@ -1,31 +1,71 @@
-seed-prompt.txt
-
-# Dependencies / env / build — always installed co-located with their project (admin/, CC-Hosting-Public/, etc.), never at repo root (see Execution Plan §3)
-# Node / Next.js
-**/node_modules/
-**/.next/
-**/out/
-**/dist/
-**/build/
-**/.turbo/
-**/.vercel/
-**/coverage/
-.next/
-out/
-dist/
-build/
+# Dependencies
 node_modules/
+**/node_modules/
+.pnp
+.pnp.js
 
-# Python
-**/.venv/
+# Next.js Build Outputs
+.next/
+**/.next/
+out/
+**/out/
+build/
+**/build/
+dist/
+**/dist/
+
+# Vercel & Turbo
+.vercel/
+**/.vercel/
+.turbo/
+**/.turbo/
+
+# Environment variables
+.env
+.env*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+**/.env*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Coverage / Testing
+coverage/
+**/coverage/
+.nyc_output
+
+# Python (if any backend or tools)
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.venv/
 **/venv/
 **/env/
-**/__pycache__/
-**/.pytest_cache/
-**/.mypy_cache/
-**/.ruff_cache/
-**/*.egg-info/
-**/.tox/
-__pycache__/
-.venv/
-venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Private seed & scratch
+seed-prompt.txt

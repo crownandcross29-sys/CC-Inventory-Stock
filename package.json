@@ -1,0 +1,13 @@
+{
+  "name": "crown-and-cross",
+  "version": "0.0.6",
+  "private": true,
+  "description": "Crown & Cross \u2014 Football Jerseys E-Commerce & Inventory Management",
+  "scripts": {
+    "launch": "node scripts/start.js",
+    "start": "node scripts/start.js",
+    "install:all": "npm install --prefix admin && npm install --prefix CC-Hosting-Public"
+  },
+  "author": "Jason Clement",
+  "license": "UNLICENSED"
+}
