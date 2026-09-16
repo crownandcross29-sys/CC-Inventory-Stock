@@ -8,12 +8,12 @@ const rootDir = path.resolve(__dirname, "..");
 const adminDir = path.join(rootDir, "admin");
 const publicDir = path.join(rootDir, "CC-Hosting-Public");
 
-console.log("=========================================");
+console.log("=====================================================");
 console.log("  Crown & Cross — Local Development Runner");
-console.log("=========================================");
-console.log("  Admin App:      http://localhost:3000");
-console.log("  Public Store:   http://localhost:3001");
-console.log("=========================================\n");
+console.log("=====================================================");
+console.log("  Admin Portal:      http://localhost:3000");
+console.log("  Public Storefront: http://localhost:3001");
+console.log("=====================================================\n");
 
 function openBrowser(url) {
   const plat = process.platform;
@@ -65,11 +65,37 @@ function waitForUrlAndOpen(url, label, delayMs = 0) {
 }
 
 function run(name, command, cwd) {
+  // Use pipe and CI mode so Next.js doesn't interleave interactive spinners or raw escape codes in Windows cmd
   const child = spawn(command, {
     cwd,
-    stdio: "inherit",
-    shell: true
+    stdio: ["ignore", "pipe", "pipe"],
+    shell: true,
+    env: {
+      ...process.env,
+      FORCE_COLOR: "0",
+      CI: "1"
+    }
   });
+
+  const handleStreamData = (data) => {
+    const text = data.toString();
+    const lines = text.split(/\r?\n/);
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      // Strip ANSI escape codes, cursor control codes, and unprintable characters
+      const cleanLine = line
+        .replace(/\u001b\[[0-9;?]*[a-zA-Z]/g, "")
+        .replace(/\[\?[0-9]+[a-zA-Z]/g, "")
+        .replace(/[\x00-\x09\x0B-\x1F\x7F]/g, "")
+        .trim();
+      if (cleanLine) {
+        console.log(`[${name}] ${cleanLine}`);
+      }
+    }
+  };
+
+  child.stdout.on("data", handleStreamData);
+  child.stderr.on("data", handleStreamData);
 
   child.on("error", (err) => {
     console.error(`[${name}] Failed to start:`, err.message);
@@ -88,10 +114,10 @@ function run(name, command, cwd) {
 const adminProcess = run("Admin", "npm run dev", adminDir);
 
 // Start Public Storefront on port 3001
-const publicProcess = run("Storefront", "npm run dev", publicDir);
+const publicProcess = run("Store", "npm run dev", publicDir);
 
 // Automatically open in browser once each service responds
-waitForUrlAndOpen("http://localhost:3000", "Admin App", 0);
+waitForUrlAndOpen("http://localhost:3000", "Admin Portal", 0);
 waitForUrlAndOpen("http://localhost:3001", "Public Storefront", 800);
 
 const shutdown = () => {
@@ -117,7 +143,7 @@ const shutdown = () => {
         if (publicProcess.kill) publicProcess.kill("SIGTERM");
       }
     }
-  } catch (_) {}
+  } catch (_) { }
   process.exit(0);
 };
 
