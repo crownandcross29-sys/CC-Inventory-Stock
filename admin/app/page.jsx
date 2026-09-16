@@ -21,7 +21,8 @@ import {
   AlertCircle,
   TrendingUp,
   PackageCheck,
-  AlertTriangle
+  AlertTriangle,
+  ExternalLink
 } from 'lucide-react';
 
 const DEFAULT_CATEGORIES = ['Club', 'Country', 'Retro'];
@@ -477,6 +478,30 @@ export default function AdminPage() {
               </span>
             </div>
           </div>
+
+          <a
+            href="http://localhost:3001"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '10px 16px',
+              backgroundColor: 'var(--bg-elevated)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-primary)',
+              borderRadius: '10px',
+              fontSize: '13px',
+              fontWeight: 600,
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
+            }}
+            title="Open Live Public Storefront (Port 3001)"
+          >
+            <ExternalLink size={14} color="var(--gold-primary)" />
+            <span>View Store</span>
+          </a>
 
           <button
             onClick={handleFullSync}

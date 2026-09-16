@@ -24,10 +24,11 @@ Run the unified cross-platform launcher:
 ```bash
 npm run launch
 ```
-*(Or on Windows, double click `scripts/start.bat`)*
+*(Or on Windows, double click `scripts/start.bat`; on macOS/Linux run `bash scripts/start.sh`)*
 
-- **Admin Portal:** [http://localhost:3000](http://localhost:3000)
-- **Public Storefront:** [http://localhost:3001](http://localhost:3001)
+The launcher executes health-polling readiness checks and **automatically opens your default browser** to both applications once ports are ready:
+- **Admin Portal:** [http://localhost:3000](http://localhost:3000) *(auto-opened)*
+- **Public Storefront:** [http://localhost:3001](http://localhost:3001) *(auto-opened)*
 
 ---
 
@@ -87,6 +88,15 @@ The Crown & Cross Admin Portal (`http://localhost:3000`) provides comprehensive 
    - Live formatted JSON viewer and emergency syntax editor for `products.json`.
    - In-browser JSON formatter, syntax validator, and clipboard copy.
    - One-click `.json` snapshot download for manual backups.
+
+6. **📲 Universal WhatsApp Engine**:
+   - Integrated cross-platform deep-linking (`whatsapp://send` + `api.whatsapp.com`).
+   - Automatically pre-types order details, itemized quality tiers, and customer address for 1-click dispatch across Windows, macOS, Android, and iOS (iPhone/iPad).
+
+7. **📱 Full Responsive Multi-Screen Compatibility**:
+   - **Large Screens (Desktop & 4K):** Max-width constraints and clamp-based fluid typography.
+   - **Medium Screens (Tablets & Laptops):** Multi-column auto-fit grids and responsive layout transitions.
+   - **Small Screens (Mobile Phones):** Fluid single-column collapse (`minmax(min(100%, ...), 1fr)`), touch-swipe carousels, and viewport-safe modals with zero horizontal overflow.
 
 ---
 

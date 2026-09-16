@@ -111,11 +111,12 @@ const jsonFilePath = getJsonFilePath();
 
 ## 5. Launcher Architecture: `scripts/start.js`
 
-Uses Node.js `child_process.spawn` to spawn both Next.js applications in a non-blocking cross-platform manner:
-- Checks `process.platform === 'win32'` to dispatch commands with `.cmd` extension on Windows.
-- Spawns `Admin` on `http://localhost:3000`.
-- Spawns `Storefront` on `http://localhost:3001` via `npm run dev -- -p 3001`.
-- Registers a `SIGINT` listener to gracefully kill both child processes upon pressing `Ctrl + C`.
+Uses Node.js `child_process.spawn` to coordinate both Next.js applications in a non-blocking cross-platform manner:
+- **Node v24 Windows Compatibility:** Dispatches using `npx.cmd` and `{ shell: true }` on Windows (`win32`) to prevent Node v24 `EINVAL` spawn errors.
+- **Port Allocation:** Spawns `Admin` on `http://localhost:3000` and `Storefront` on `http://localhost:3001`.
+- **HTTP Health Polling (`checkPortReady`):** Periodically issues lightweight HTTP requests to `localhost:3000` and `localhost:3001`.
+- **Automated Browser Opener (`openBrowser`):** Once both servers return HTTP 200 responses, automatically launches the default web browser to both portals via `start` (Windows), `open` (macOS), or `xdg-open` (Linux).
+- **Process Cleanup:** Registers a `SIGINT` listener to gracefully terminate all child processes and port bindings upon pressing `Ctrl + C`.
 
 ---
 
@@ -133,3 +134,28 @@ Add these in **Vercel Dashboard** → `CC-Hosting-Public` → **Settings** → *
 | `RESEND_FROM_EMAIL` | Optional | Custom verified sender address once domain is verified | `Crown & Cross <orders@yourdomain.com>` |
 
 > **Note on Security:** Secret keys should **never** be committed to Git. `.env.local` remains in `.gitignore`. Vercel securely injects these variables into the serverless environment at build/runtime. After setting or updating keys in Vercel, trigger a **Redeploy** on the latest deployment.
+
+---
+
+## 7. Universal WhatsApp Engine: `CC-Hosting-Public/lib/whatsapp.js`
+
+Provides unified deep-linking that guarantees pre-filled recipient phone (`+91 76959 24602`) and pre-typed order messages across all client operating systems:
+
+- **Protocol Launching (`whatsapp://send`):**
+  - Directly opens native WhatsApp applications on Windows, macOS, Android, and iOS (iPhone/iPad).
+  - Bypasses intermediate landing pages that require extra clicks.
+- **Universal Link Fallback (`api.whatsapp.com/send`):**
+  - Uses official universal endpoint without `app_absent=0` parameter (which was disabling autoload).
+  - Automatically falls back to WhatsApp Web in desktop browsers if the native application is not installed.
+- **Message Sanitization (`sanitizeWhatsAppText`):**
+  - Converts multi-byte Unicode box characters (`━`, `─`, `═`) into standard ASCII hyphens (`-`).
+  - Prevents query parameter truncation and URL decoding failures across mobile browser intent handlers.
+
+---
+
+## 8. Multi-Screen Responsive Architecture
+
+1. **Viewport Scaling:** Exported Next.js 14 `viewport` metadata in `app/layout.jsx` ensures strict `1:1` device-width scaling across mobile and tablets.
+2. **Fluid Grids:** Replaced fixed minimums with fluid constraints: `repeat(auto-fit, minmax(min(100%, 280px), 1fr))` on catalog, PDP, and footer sections.
+3. **Gesture Navigation:** `JerseyCarousel.jsx` features touch swipe listeners (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with a 45px distance threshold.
+4. **Adaptive Modals:** `UpiModal.jsx` incorporates `maxHeight: '90vh'` and `overflowY: 'auto'` to maintain usability on compact and landscape mobile screens.

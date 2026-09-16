@@ -43,3 +43,13 @@ Crown & Cross eliminates this friction:
 - **No Mandatory Accounts:** Customers browse, pick their size, and checkout in seconds.
 - **Native WhatsApp Integration:** Orders are converted into clean, human-readable WhatsApp messages sent directly to founder Jason Clement (`+91 76959 24602`).
 - **Instant UPI QR Payments:** Standard UPI deep links (`upi://pay?pa=...`) generate instant dynamic QR codes for any UPI app (GPay, PhonePe, Paytm), followed by a simple screenshot confirmation.
+
+---
+
+## 5. Universal Ergonomics & The "Zero Dead Link" Law
+
+Software should respect the user's time and device choices:
+1. **Device-Agnostic Fluidity:** Whether viewing on an ultrawide desktop monitor, an iPad, or a compact smartphone, every element adapts without horizontal clipping, visual breakage, or overlapping text.
+2. **Intent-Direct Deep Linking:** When a customer clicks to order via WhatsApp, they shouldn't encounter dead ends, empty text boxes, or intermediate website prompts. Native protocols take them straight into the chat with their order already written out.
+3. **Graceful Degradation:** When optional services (like Resend API keys or desktop applications) are unavailable or unconfigured, the UI never crashes or shows a broken state. It automatically detects and offers an immediate, working alternative (e.g. direct WhatsApp estimate dispatch or Web fallback).
+4. **Instant Developer Feedback:** Launching the dev environment (`npm run launch`) doesn't require manually checking terminal ports or opening tabs. The system performs readiness health checks and opens both applications in the browser automatically.
