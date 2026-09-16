@@ -203,3 +203,91 @@ With no backend database, this has to live as logic against your `products.json`
 3. Define the `products.json` schema (fields: id, name, category, club/country, price, sizes[], stock, images[]) — get this right first since everything else depends on it.
 4. Build the Admin CRUD → JSON pipeline before touching any storefront UI.
 5. Build the storefront in the Phase 1 order above.
+
+---
+
+## 10. Requirements from Owner (Action Checklist to Proceed)
+
+To begin Phase 0 & Phase 1 development without blockers, the following inputs, decisions, credentials, and assets are required from Jason (the Owner).
+
+---
+
+### 1. Brand Identity & Visual Assets
+- [ ] **Theme Palette Selection:** Review the design themes in `Crown-and-Cross-theme-palette.html` and choose the primary visual direction (e.g., *Pitch Black & Royal Gold*, *Heritage Emerald*, or custom preference).
+- [ ] **Brand Logo & Favicon:** High-resolution vector file (`.svg`) or transparent background PNGs (`.png`) for dark/light backgrounds and mobile header.
+- [ ] **Brand Copy & Manifesto:** 
+  - Confirmation of primary tagline (*"Some wear fashion. We wear football."* vs. *"Wear Your Club. Wear Your Story."*).
+  - Short "Our Story" paragraph for the About Us section.
+- [ ] **Social Media Links:** Official Instagram handle, X (Twitter), TikTok/YouTube channel URLs to link in footer and social wall.
+
+---
+
+### 2. Communication & Ordering Channels
+- [ ] **WhatsApp Business Phone Number:** The official business phone number (with country code, e.g., `+91 XXXXXXXXXX`) to receive client carts and auto-formatted order requests via `wa.me` links.
+- [ ] **Customer Support / Orders Email:** Dedicated email address (e.g., `orders@crownandcross.com` or Gmail) for order fallback dispatches (`mailto:`) and customer queries.
+- [ ] **Business Operating Location:** City & State (to display on the Contact page, invoice notes, and shipping estimates).
+
+---
+
+### 3. Payment & UPI Configuration
+- [ ] **UPI Virtual Payment Address (VPA / UPI ID):** Active UPI ID (e.g., `crownandcross@okhdfcbank` or `name@upi`) that will receive customer payments.
+- [ ] **Registered Payee Account Name:** Exact name registered with the UPI bank account (required for the UPI deep link `pn=` parameter so bank apps don't throw fraud warnings).
+- [ ] **Manual Verification Workflow Confirmation:** Confirmation of the order confirmation protocol: customer scans the auto-generated QR code, makes payment, and sends the transaction screenshot via WhatsApp/Email for manual order fulfillment.
+
+---
+
+### 4. Product Catalog & Media Assets (Initial Seed Data)
+- [ ] **Seed Product List (5–10 items for launch):**
+  - Product Name (e.g., *Real Madrid 23/24 Home Kit*, *Argentina 1986 Maradona Retro*, *Arsenal 03/04 Invincibles*).
+  - Category: **Club**, **Country**, or **Retro**.
+  - Pricing: Regular/MRP and Sale price (in INR ₹).
+  - Available Sizes: (e.g., S, M, L, XL, XXL) and stock status (*In Stock*, *Out of Stock*, *Low Stock*).
+  - Sizing measurements for the Size & Fit Guide (chest width & jersey length in inches/cm).
+- [ ] **Product Photos & Image Hosting:**
+  - High-res kit images (minimum 2–3 photos per product: front view, back view, crest/fabric detail).
+  - Google Drive folder with "Anyone with link can view" sharing permissions containing image files, OR decision to use Cloudinary / Vercel Blob for direct CDN delivery.
+
+---
+
+### 5. Accounts, Infrastructure & Access
+- [ ] **Central Google Account:** A dedicated Google account created for Crown & Cross (used for GitHub, Vercel, Google Drive/Photos asset storage).
+- [ ] **GitHub Access & Permissions:** Confirmation that the development team has write access to:
+  - `krishnakanthb13/CC-Inventory-Stock` (Private Admin repo)
+  - `krishnakanthb13/CC-Hosting-Public` (Public Storefront repo)
+- [ ] **Vercel Account Access:** Access or invite to the Vercel project connected to `CC-Hosting-Public`.
+- [ ] **Domain Name (Optional for Launch):** Custom domain (e.g., `crownandcross.in` / `crownandcross.com`) if purchased, or confirmation to run on `crown-and-cross.vercel.app` initially.
+
+---
+
+### 6. Customization, Discounts & Estimates
+- [ ] **Custom Name & Number Printing Pricing:**
+  - Cost per printed jersey (e.g., flat +₹199 or +₹299).
+  - Maximum character limit for names (e.g., 12 letters) and numbers (e.g., 2 digits: 00–99).
+  - Lead time / added delivery days for customized orders.
+- [ ] **Launch Discount Codes:** Any starting promotional coupon codes (e.g., `WELCOME10` for 10% off) and rules (e.g., min purchase value).
+- [ ] **Bulk / Team Orders (Request Estimate):** Minimum quantity required to qualify for bulk jersey quotes (e.g., 5+ or 10+ kits).
+
+---
+
+### 7. Store Policies & Legal Terms
+- [ ] **Shipping & Delivery Policy:**
+  - Delivery timelines (e.g., Metro cities: 3–5 business days, Rest of India: 5–8 business days).
+  - Shipping fee structure (e.g., Flat ₹50 shipping, or Free Shipping on orders over ₹1,499).
+- [ ] **Returns, Exchange & Refund Policy:**
+  - Sizing exchange window (e.g., 5 days or 7 days from delivery date).
+  - Conditions (tags intact, unworn, non-customized).
+  - Explicit rule: are personalized/custom printed jerseys non-returnable? (Standard practice is Yes).
+- [ ] **Legal Business Entity Name:** Registered business or trade name (if incorporated) to populate Terms of Service and Privacy Policy.
+
+---
+
+### Quick Priority Summary (What is needed FIRST):
+
+| Priority | Item | Required For |
+|---|---|---|
+| 🚨 **P0 (Day 1)** | WhatsApp Number + UPI ID & Payee Name | Core Cart checkout & UPI QR generation |
+| 🚨 **P0 (Day 1)** | 3–5 Sample Products + Photo links | `products.json` schema validation & Admin CRUD |
+| 🟡 **P1 (Week 1)** | Theme Palette choice + Logo SVG/PNG | Brand identity, typography & Storefront layout |
+| 🟡 **P1 (Week 1)** | GitHub & Vercel project permissions | Automated CI/CD pipeline & staging deployment |
+| 🟢 **P2 (Week 2)** | Return, Shipping, and Legal terms | Policy pages & customer trust modules |
+| 🟢 **P2 (Week 2)** | Custom printing pricing & discount codes | Growth & marketing pages |
