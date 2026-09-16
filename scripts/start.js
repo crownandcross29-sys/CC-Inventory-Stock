@@ -16,10 +16,11 @@ console.log("  Public Store:   http://localhost:3001");
 console.log("=========================================\n");
 
 function run(name, cmd, args, cwd) {
-  const child = spawn(isWin ? `${cmd}.cmd` : cmd, args, {
+  const executable = isWin ? `${cmd}.cmd` : cmd;
+  const child = spawn(executable, args, {
     cwd,
     stdio: "inherit",
-    shell: isWin
+    shell: false
   });
 
   child.on("error", (err) => {
@@ -39,7 +40,7 @@ function run(name, cmd, args, cwd) {
 const adminProcess = run("Admin", "npm", ["run", "dev"], adminDir);
 
 // Start Public Storefront on port 3001
-const publicProcess = run("Storefront", "npm", ["run", "dev", "--", "-p", "3001"], publicDir);
+const publicProcess = run("Storefront", "npm", ["run", "dev"], publicDir);
 
 process.on("SIGINT", () => {
   console.log("\nShutting down Crown & Cross servers...");

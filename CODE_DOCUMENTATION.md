@@ -37,11 +37,14 @@ CC-Inventory-Stock/
 Provides atomic file read/write operations targeting `CC-Hosting-Public/public/data/products.json`.
 
 ```javascript
-const jsonFilePath = path.resolve(__dirname, '../../CC-Hosting-Public/public/data/products.json');
+// Resolves the repository root by upward directory traversal
+const jsonFilePath = getJsonFilePath();
 ```
 
 ### Exported Functions:
-- **`getProductsData()`**: Reads and parses `products.json`. Throws error if file is missing or contains invalid JSON.
+- **`findRepoRoot()`**: Recursively ascends directory tree from `process.cwd()` and `__dirname` to locate the repository root containing `CC-Hosting-Public`.
+- **`getJsonFilePath()`**: Dynamically returns absolute path to `CC-Hosting-Public/public/data/products.json`.
+- **`getProductsData()`**: Reads and parses `products.json`. Throws informative error if file is missing or contains invalid JSON.
 - **`saveProductsData(fullData)`**: Safely formats with 2-space indentation and writes `fullData` synchronously to `jsonFilePath`. Returns `{ success: true, timestamp }`.
 - **`createSlug(name)`**: Converts jersey names to clean SEO URL slugs (e.g. `"Real Madrid 23/24 Home"` → `"real-madrid-23-24-home"`).
 
@@ -51,10 +54,15 @@ const jsonFilePath = path.resolve(__dirname, '../../CC-Hosting-Public/public/dat
 
 | Method | Purpose | Request Body / Params | Response |
 |---|---|---|---|
-| **`GET`** | Load catalog | None | Complete JSON object containing `brand`, `categories`, `subCategories`, and `products` |
-| **`POST`** | Add product or Full Sync | `{ product: { ... } }` or `{ fullSync: true, data: { ... } }` | `{ success: true, product, total }` |
+| **`GET`** | Load complete catalog & settings | None | Complete JSON object containing `brand`, `categories`, `subCategories`, and `products` |
+| **`POST`** | Add product | `{ product: { name, price, ... } }` | `{ success: true, product, total }` |
+| **`POST`** | Update brand settings | `{ action: "updateBrand", brand: { ... } }` | `{ success: true, message, data }` |
+| **`POST`** | Update shipping & exchanges | `{ action: "updateShippingExchange", shipping: { ... }, exchange: { ... } }` | `{ success: true, message, data }` |
+| **`POST`** | Update taxonomy | `{ action: "updateTaxonomy", categories: [ ... ], subCategories: [ ... ] }` | `{ success: true, message, data }` |
+| **`POST`** | Direct raw JSON edit | `{ action: "updateRawJson", rawJson: "{ ... }" }` | `{ success: true, message, data }` |
+| **`POST`** | Full catalog sync | `{ fullSync: true, data: { ... } }` | `{ success: true, message, data }` |
 | **`PUT`** | Update existing product | `{ id: "cc-001", updates: { price: 1499, ... } }` | `{ success: true, product }` |
-| **`PATCH`** | Quick Stock Status toggle | `{ id: "cc-001", stockStatus: "Low Stock", inStock: true }` | `{ success: true, product }` |
+| **`PATCH`** | Quick stock status toggle | `{ id: "cc-001", stockStatus: "Low Stock", inStock: true }` | `{ success: true, product }` |
 | **`DELETE`** | Remove product | Query Param: `?id=cc-001` | `{ success: true, remaining }` |
 
 ---
@@ -108,3 +116,20 @@ Uses Node.js `child_process.spawn` to spawn both Next.js applications in a non-b
 - Spawns `Admin` on `http://localhost:3000`.
 - Spawns `Storefront` on `http://localhost:3001` via `npm run dev -- -p 3001`.
 - Registers a `SIGINT` listener to gracefully kill both child processes upon pressing `Ctrl + C`.
+
+---
+
+## 6. Vercel Deployment & Secret Configuration
+
+The public storefront (`CC-Hosting-Public`) is designed for automatic continuous deployment on Vercel:
+
+### Environment Variables on Vercel:
+Add these in **Vercel Dashboard** → `CC-Hosting-Public` → **Settings** → **Environment Variables**:
+
+| Variable Name | Required | Description | Example |
+|---|---|---|---|
+| `RESEND_API_KEY` | **Yes** (for estimates) | Secret API key from [Resend](https://resend.com/api-keys) | `re_123456789...` |
+| `ESTIMATE_NOTIFICATION_EMAIL` | Optional | Inbox receiving team jersey quotation requests | `crownandcross29@gmail.com` |
+| `RESEND_FROM_EMAIL` | Optional | Custom verified sender address once domain is verified | `Crown & Cross <orders@yourdomain.com>` |
+
+> **Note on Security:** Secret keys should **never** be committed to Git. `.env.local` remains in `.gitignore`. Vercel securely injects these variables into the serverless environment at build/runtime. After setting or updating keys in Vercel, trigger a **Redeploy** on the latest deployment.

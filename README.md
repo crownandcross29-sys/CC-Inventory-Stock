@@ -58,16 +58,35 @@ CC-Inventory-Stock/                 (Repo 1 — Private Admin)
 
 ---
 
-## ✨ Features
+## ✨ Comprehensive Admin Modules
 
-- **Full Product CRUD**: Add, edit, and delete football jerseys with live image preview.
-- **Taxonomy Management**:
-  - **Categories**: Club, Country, Retro
-  - **Quality Tiers**: Player Version, Master Copy, Fan Version Set, Embroidered, Sublimation
-- **Inline Stock Status Toggle**: Instant toggle between `In Stock` (green), `Low Stock` (amber), and `Out of Stock` (red).
-- **KPI Metrics Dashboard**: Total catalog count, items in stock, out of stock alerts, and total inventory retail valuation (₹ INR).
-- **Search & Multi-Filter**: Filter catalog by search terms, primary category, quality tier, or stock status.
-- **One-Click Re-Sync**: Force reload and push updates to `products.json`.
+The Crown & Cross Admin Portal (`http://localhost:3000`) provides comprehensive control over all data stored in `products.json`:
+
+1. **👕 Jerseys & Inventory Catalog**:
+   - Add, edit, and delete football jerseys with multi-image previews and size tags (`S`, `M`, `L`, `XL`, `XXL`).
+   - Inline stock status toggle (`In Stock`, `Low Stock`, `Out of Stock`) and quantity tracking.
+   - Dynamic KPI counters: Total jerseys, active stock, sold-out alerts, and aggregate retail valuation (₹).
+   - Real-time search and multi-facet filtering by category, quality grade, and stock level.
+
+2. **🏛️ Brand & Store Identity**:
+   - Store Name, primary hero tagline, and secondary story value proposition.
+   - WhatsApp direct ordering phone number (`+917695924602`), official support email, and store headquarters.
+   - Merchant UPI ID (`jasonclement.jm-1@okhdfcbank`) and registered payee name that power client-side dynamic QR code payments.
+
+3. **🚚 Shipping & Exchange Rules**:
+   - Standard shipping fee (₹80) and free shipping threshold (₹1,499) that dynamically adjusts the Cart Drawer progress meter.
+   - Metro city (`3-5 Business Days`) and Pan-India (`5-8 Business Days`) delivery timeframes.
+   - Sizing exchange window (`5-7 Days`) and mandatory return conditions.
+
+4. **🏷️ Categories & Quality Grades**:
+   - Add, edit, and delete primary categories (`Club`, `Country`, `Retro`) with auto-slug generation.
+   - Configure the 5 quality sub-categories (`Player Version`, `Master Copy`, `Fan Version Set`, `Embroidered`, `Sublimation`) and their customer-facing spec descriptions.
+   - Dynamically populates jersey forms and filter buttons across the application.
+
+5. **💻 Raw JSON Inspector & Backups**:
+   - Live formatted JSON viewer and emergency syntax editor for `products.json`.
+   - In-browser JSON formatter, syntax validator, and clipboard copy.
+   - One-click `.json` snapshot download for manual backups.
 
 ---
 

@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { NextResponse } from 'next/server';
 const { getProductsData, saveProductsData, createSlug } = require('../../../lib/generateJson');
 
@@ -13,13 +16,90 @@ export async function GET() {
 export async function POST(request) {
   try {
     const payload = await request.json();
-    const data = getProductsData();
 
-    // If full data replacement or sync
-    if (payload.fullSync && payload.data) {
-      saveProductsData(payload.data);
-      return NextResponse.json({ success: true, message: 'All products synced successfully', data: payload.data });
+    // 1. Full data replacement or sync
+    if (payload.fullSync) {
+      if (payload.data && Array.isArray(payload.data.products) && payload.data.products.length > 0) {
+        saveProductsData(payload.data);
+        return NextResponse.json({ success: true, message: 'All data synced successfully', data: payload.data });
+      } else {
+        // Fallback reload from disk if payload data is empty
+        const freshData = getProductsData();
+        return NextResponse.json({ success: true, message: 'Catalog reloaded from disk', data: freshData });
+      }
     }
+
+    // 2. Action: Update Brand Information
+    if (payload.action === 'updateBrand') {
+      const data = getProductsData();
+      data.brand = {
+        ...data.brand,
+        ...payload.brand,
+        shipping: {
+          ...(data.brand?.shipping || {}),
+          ...(payload.brand?.shipping || {})
+        },
+        exchange: {
+          ...(data.brand?.exchange || {}),
+          ...(payload.brand?.exchange || {})
+        }
+      };
+      saveProductsData(data);
+      return NextResponse.json({ success: true, message: 'Brand & store settings updated successfully', data });
+    }
+
+    // 3. Action: Update Shipping & Exchange Rules
+    if (payload.action === 'updateShippingExchange') {
+      const data = getProductsData();
+      data.brand = {
+        ...data.brand,
+        shipping: {
+          ...(data.brand?.shipping || {}),
+          ...(payload.shipping || {})
+        },
+        exchange: {
+          ...(data.brand?.exchange || {}),
+          ...(payload.exchange || {})
+        }
+      };
+      saveProductsData(data);
+      return NextResponse.json({ success: true, message: 'Shipping & exchange rules saved successfully', data });
+    }
+
+    // 4. Action: Update Categories & Sub-Categories (Taxonomy)
+    if (payload.action === 'updateTaxonomy') {
+      const data = getProductsData();
+      if (Array.isArray(payload.categories)) {
+        data.categories = payload.categories;
+      }
+      if (Array.isArray(payload.subCategories)) {
+        data.subCategories = payload.subCategories;
+      }
+      saveProductsData(data);
+      return NextResponse.json({ success: true, message: 'Categories and quality grades updated successfully', data });
+    }
+
+    // 5. Action: Direct Raw JSON overwrite with validation
+    if (payload.action === 'updateRawJson') {
+      if (!payload.rawJson) {
+        return NextResponse.json({ error: 'No JSON payload provided' }, { status: 400 });
+      }
+      let parsed;
+      try {
+        parsed = typeof payload.rawJson === 'string' ? JSON.parse(payload.rawJson) : payload.rawJson;
+      } catch (parseErr) {
+        return NextResponse.json({ error: `JSON Parse Error: ${parseErr.message}` }, { status: 400 });
+      }
+
+      if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.products)) {
+        return NextResponse.json({ error: 'Invalid schema: Root must contain a "products" array' }, { status: 400 });
+      }
+
+      saveProductsData(parsed);
+      return NextResponse.json({ success: true, message: 'Raw JSON validated and applied to products.json', data: parsed });
+    }
+
+    const data = getProductsData();
 
     // Otherwise add new product
     const product = payload.product;

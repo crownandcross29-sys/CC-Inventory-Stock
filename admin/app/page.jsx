@@ -1,9 +1,13 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import BrandSettingsTab from '../components/BrandSettingsTab';
+import ShippingExchangeTab from '../components/ShippingExchangeTab';
+import TaxonomyTab from '../components/TaxonomyTab';
+import RawJsonTab from '../components/RawJsonTab';
 
-const CATEGORIES = ['Club', 'Country', 'Retro'];
-const SUB_CATEGORIES = [
+const DEFAULT_CATEGORIES = ['Club', 'Country', 'Retro'];
+const DEFAULT_SUB_CATEGORIES = [
   'Player Version',
   'Master Copy',
   'Fan Version Set',
@@ -18,6 +22,7 @@ export default function AdminPage() {
   const [syncing, setSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState(null);
   const [notice, setNotice] = useState(null);
+  const [activeTab, setActiveTab] = useState('jerseys'); // 'jerseys' | 'brand' | 'shipping' | 'taxonomy' | 'raw'
 
   // Filters
   const [search, setSearch] = useState('');
@@ -56,12 +61,14 @@ export default function AdminPage() {
       setLoading(true);
       const res = await fetch('/api/products');
       const json = await res.json();
-      if (json.products) {
+      if (res.ok && json.products) {
         setData(json);
         setLastSyncTime(new Date().toLocaleTimeString());
+      } else {
+        showNotice(`Failed to load: ${json.error || 'Server error'}`, 'error');
       }
     } catch (err) {
-      showNotice('Failed to load products from JSON', 'error');
+      showNotice(`Failed to load products: ${err.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -108,6 +115,21 @@ export default function AdminPage() {
     return { total, inStock, lowStock, outStock, totalValue };
   }, [data.products]);
 
+  // Dynamic taxonomy options derived from products.json
+  const availableCategories = useMemo(() => {
+    if (data.categories && data.categories.length > 0) {
+      return data.categories.map((c) => (typeof c === 'string' ? c : c.name));
+    }
+    return DEFAULT_CATEGORIES;
+  }, [data.categories]);
+
+  const availableSubCategories = useMemo(() => {
+    if (data.subCategories && data.subCategories.length > 0) {
+      return data.subCategories.map((s) => (typeof s === 'string' ? s : s.name));
+    }
+    return DEFAULT_SUB_CATEGORIES;
+  }, [data.subCategories]);
+
   // Quick Stock Status toggle
   const handleQuickStockChange = async (productId, newStatus) => {
     try {
@@ -118,8 +140,8 @@ export default function AdminPage() {
         body: JSON.stringify({ id: productId, stockStatus: newStatus, inStock })
       });
 
-      if (!res.ok) throw new Error();
       const updatedJson = await res.json();
+      if (!res.ok) throw new Error(updatedJson.error || 'Server error');
 
       setData((prev) => ({
         ...prev,
@@ -128,7 +150,7 @@ export default function AdminPage() {
       setLastSyncTime(new Date().toLocaleTimeString());
       showNotice(`Stock status updated for ${updatedJson.product.name}`);
     } catch (err) {
-      showNotice('Failed to update stock status', 'error');
+      showNotice(`Failed to update stock: ${err.message}`, 'error');
     }
   };
 
@@ -145,8 +167,8 @@ export default function AdminPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: editingProduct.id, updates: formData })
         });
-        if (!res.ok) throw new Error();
         const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Server error');
 
         setData((prev) => ({
           ...prev,
@@ -160,8 +182,8 @@ export default function AdminPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ product: formData })
         });
-        if (!res.ok) throw new Error();
         const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Server error');
 
         setData((prev) => ({
           ...prev,
@@ -175,7 +197,7 @@ export default function AdminPage() {
       setFormData(initialForm);
       setLastSyncTime(new Date().toLocaleTimeString());
     } catch (err) {
-      showNotice('Error saving product to JSON', 'error');
+      showNotice(`Error saving product: ${err.message}`, 'error');
     } finally {
       setSyncing(false);
     }
@@ -186,7 +208,8 @@ export default function AdminPage() {
     if (!deleteTarget) return;
     try {
       const res = await fetch(`/api/products?id=${deleteTarget.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Server error');
 
       setData((prev) => ({
         ...prev,
@@ -196,7 +219,7 @@ export default function AdminPage() {
       setDeleteTarget(null);
       setLastSyncTime(new Date().toLocaleTimeString());
     } catch (err) {
-      showNotice('Failed to delete product', 'error');
+      showNotice(`Failed to delete product: ${err.message}`, 'error');
     }
   };
 
@@ -209,11 +232,15 @@ export default function AdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullSync: true, data })
       });
-      if (!res.ok) throw new Error();
-      showNotice('Successfully pushed updates to CC-Hosting-Public/data/products.json!');
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Server error');
+      if (json.data) {
+        setData(json.data);
+      }
+      showNotice(`Successfully synced ${json.data?.products?.length ?? data.products.length} products to CC-Hosting-Public/data/products.json!`);
       setLastSyncTime(new Date().toLocaleTimeString());
     } catch (err) {
-      showNotice('Sync error', 'error');
+      showNotice(`Sync error: ${err.message}`, 'error');
     } finally {
       setSyncing(false);
     }
@@ -239,6 +266,106 @@ export default function AdminPage() {
     });
     setIsAddOpen(true);
   };
+
+  // Save Brand & Store Settings
+  const handleSaveBrand = async (brandData) => {
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateBrand', brand: brandData })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Server error');
+      if (json.data) setData(json.data);
+      showNotice('Brand & store profile updated and saved to products.json!');
+      setLastSyncTime(new Date().toLocaleTimeString());
+    } catch (err) {
+      showNotice(`Failed to save brand settings: ${err.message}`, 'error');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Save Shipping & Exchange Rules
+  const handleSaveShipping = async ({ shipping, exchange }) => {
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateShippingExchange', shipping, exchange })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Server error');
+      if (json.data) setData(json.data);
+      showNotice('Shipping rates & exchange policy saved to products.json!');
+      setLastSyncTime(new Date().toLocaleTimeString());
+    } catch (err) {
+      showNotice(`Failed to save shipping & exchanges: ${err.message}`, 'error');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Save Categories & Quality Grades
+  const handleSaveTaxonomy = async ({ categories, subCategories }) => {
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateTaxonomy', categories, subCategories })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Server error');
+      if (json.data) setData(json.data);
+      showNotice('Categories and quality grades saved to products.json!');
+      setLastSyncTime(new Date().toLocaleTimeString());
+    } catch (err) {
+      showNotice(`Failed to save taxonomy: ${err.message}`, 'error');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Save Raw JSON
+  const handleSaveRawJson = async (rawJsonText) => {
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateRawJson', rawJson: rawJsonText })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Server error');
+      if (json.data) setData(json.data);
+      showNotice('Raw JSON validated and applied to products.json!');
+      setLastSyncTime(new Date().toLocaleTimeString());
+    } catch (err) {
+      showNotice(`Failed to save raw JSON: ${err.message}`, 'error');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const getTabStyle = (isActive) => ({
+    padding: '10px 18px',
+    borderRadius: '10px',
+    fontSize: '13px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    border: isActive ? '1px solid var(--gold-primary)' : '1px solid var(--border-subtle)',
+    backgroundColor: isActive ? 'var(--gold-dim)' : 'var(--bg-surface)',
+    color: isActive ? 'var(--gold-primary)' : 'var(--text-secondary)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    whiteSpace: 'nowrap',
+    transition: 'all 0.2s'
+  });
 
   return (
     <div style={{ padding: '24px 32px', maxWidth: '1440px', margin: '0 auto' }}>
@@ -372,10 +499,60 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* KPI Stats Strip */}
+      {/* Navigation Tab Bar */}
       <div
         style={{
-          display: 'grid',
+          display: 'flex',
+          gap: '8px',
+          borderBottom: '1px solid var(--border-subtle)',
+          paddingBottom: '14px',
+          marginBottom: '26px',
+          overflowX: 'auto'
+        }}
+      >
+        <button
+          onClick={() => setActiveTab('jerseys')}
+          style={getTabStyle(activeTab === 'jerseys')}
+        >
+          <span>👕</span> Jerseys Catalog ({stats.total})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('brand')}
+          style={getTabStyle(activeTab === 'brand')}
+        >
+          <span>🏛️</span> Brand & Store Profile
+        </button>
+
+        <button
+          onClick={() => setActiveTab('shipping')}
+          style={getTabStyle(activeTab === 'shipping')}
+        >
+          <span>🚚</span> Shipping & Exchanges
+        </button>
+
+        <button
+          onClick={() => setActiveTab('taxonomy')}
+          style={getTabStyle(activeTab === 'taxonomy')}
+        >
+          <span>🏷️</span> Categories & Quality Grades ({availableCategories.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('raw')}
+          style={getTabStyle(activeTab === 'raw')}
+        >
+          <span>💻</span> Raw JSON & Backups
+        </button>
+      </div>
+
+      {/* Tab 1: Jerseys & Inventory Table */}
+      {activeTab === 'jerseys' && (
+        <>
+          {/* KPI Stats Strip */}
+          <div
+            style={{
+              display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: '16px',
           marginBottom: '28px'
@@ -472,8 +649,8 @@ export default function AdminPage() {
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
           {/* Category Filter */}
-          <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
-            {['All', ...CATEGORIES].map((cat) => (
+          <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border-subtle)', overflowX: 'auto' }}>
+            {['All', ...availableCategories].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategoryFilter(cat)}
@@ -485,7 +662,8 @@ export default function AdminPage() {
                   borderRadius: '7px',
                   cursor: 'pointer',
                   backgroundColor: categoryFilter === cat ? 'var(--gold-primary)' : 'transparent',
-                  color: categoryFilter === cat ? '#0e1410' : 'var(--text-secondary)'
+                  color: categoryFilter === cat ? '#0e1410' : 'var(--text-secondary)',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 {cat}
@@ -508,7 +686,7 @@ export default function AdminPage() {
             }}
           >
             <option value="All">All Quality Types</option>
-            {SUB_CATEGORIES.map((sc) => (
+            {availableSubCategories.map((sc) => (
               <option key={sc} value={sc}>
                 {sc}
               </option>
@@ -758,6 +936,46 @@ export default function AdminPage() {
           </table>
         </div>
       </div>
+      </>
+      )}
+
+      {/* Tab 2: Brand & Store Identity */}
+      {activeTab === 'brand' && (
+        <BrandSettingsTab
+          brand={data.brand}
+          onSave={handleSaveBrand}
+          syncing={syncing}
+        />
+      )}
+
+      {/* Tab 3: Shipping & Exchanges */}
+      {activeTab === 'shipping' && (
+        <ShippingExchangeTab
+          shipping={data.brand?.shipping}
+          exchange={data.brand?.exchange}
+          onSave={handleSaveShipping}
+          syncing={syncing}
+        />
+      )}
+
+      {/* Tab 4: Categories & Quality Grades */}
+      {activeTab === 'taxonomy' && (
+        <TaxonomyTab
+          categories={data.categories}
+          subCategories={data.subCategories}
+          onSave={handleSaveTaxonomy}
+          syncing={syncing}
+        />
+      )}
+
+      {/* Tab 5: Raw JSON & Backups */}
+      {activeTab === 'raw' && (
+        <RawJsonTab
+          data={data}
+          onSave={handleSaveRawJson}
+          syncing={syncing}
+        />
+      )}
 
       {/* Add / Edit Product Modal */}
       {isAddOpen && (
@@ -892,7 +1110,7 @@ export default function AdminPage() {
                       fontSize: '13px'
                     }}
                   >
-                    {CATEGORIES.map((cat) => (
+                    {availableCategories.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>
@@ -917,7 +1135,7 @@ export default function AdminPage() {
                       fontSize: '13px'
                     }}
                   >
-                    {SUB_CATEGORIES.map((sc) => (
+                    {availableSubCategories.map((sc) => (
                       <option key={sc} value={sc}>
                         {sc}
                       </option>
