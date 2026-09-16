@@ -139,16 +139,16 @@ Run with `node scripts/start.js` on any OS. Add a matching `npm run launch` scri
 ### Cart → WhatsApp / Email handoff
 No backend order processing needed for MVP:
 ```
-https://wa.me/91XXXXXXXXXX?text=New%20Order%3A%20Jersey%20-%20Messi%20Argentina%20Retro%2C%20Size%20L%2C%20Qty%201
+https://wa.me/917695924602?text=New%20Order%3A%20Jersey%20-%20Messi%20Argentina%20Retro%20(Player%20Version)%2C%20Size%20L%2C%20Qty%201%2C%20Total%20%E2%82%B91499
 ```
-Build this string client-side from cart state, open on click. Same idea with `mailto:`.
+Build this string client-side from cart state, open on click. Same idea with `mailto:crownandcross29@gmail.com`.
 
 ### UPI QR Auto-Generation
 UPI deep link format:
 ```
-upi://pay?pa=yourupi@bank&pn=CrownAndCross&am=1499&tn=Order%23CC1023&cu=INR
+upi://pay?pa=jasonclement.jm-1@okhdfcbank&pn=Jason%20Clement&am=1499&tn=Order%23CC1023&cu=INR
 ```
-Generate a QR from this string client-side (e.g., `qrcode.react` or `qrcode` npm package) — no payment gateway account needed for a basic "scan and pay" flow. **Caveat:** this does not auto-confirm payment; you'll need a manual reconciliation step (customer sends screenshot, or you check your UPI app) unless you later integrate Razorpay/Cashfree UPI intents with webhook confirmation.
+Generate a QR from this string client-side (e.g., `qrcode.react` or `qrcode` npm package) — no payment gateway account needed for a basic "scan and pay" flow. **Caveat:** this does not auto-confirm payment; you'll need a manual reconciliation step (customer sends screenshot via WhatsApp `+917695924602` or email, or you check your UPI app) unless you later integrate Razorpay/Cashfree UPI intents with webhook confirmation.
 
 ### Image Carousel
 Swipe (mobile touch), click-arrow (desktop), and dot count are all standard carousel behaviors — a library like `embla-carousel` or `swiper` handles all three out of the box and is responsive.
@@ -162,20 +162,20 @@ With no backend database, this has to live as logic against your `products.json`
 
 **Phase 0 — Setup (Day 1–2)**
 - Create GitHub account/org, two repos, Vercel account, connect Repo 2 to Vercel
-- Scaffold both Next.js apps, set up Tailwind
+- Scaffold both Next.js apps, set up Tailwind with **Olive Green & Gold** theme tokens
 - Build and test the launcher script
 
 **Phase 1 — MVP Storefront (Week 1–2)**
-- Landing, Collections, PDP, Cart, Checkout (WhatsApp/email), basic Payment (UPI QR)
-- Admin: product CRUD + JSON export
+- Landing, Collections, PDP, Cart, Checkout (WhatsApp `+917695924602`/email), basic Payment (UPI QR to `jasonclement.jm-1@okhdfcbank`)
+- Admin: product CRUD + JSON export with Category & Sub-Category taxonomy
 - Manual submodule sync working end-to-end
 
 **Phase 2 — Trust & Legal (Week 2–3)**
-- About, FAQs, Contact, all four legal/policy pages
+- About (with Our Story copy), FAQs, Contact (Chennai, Tamil Nadu), all four legal/policy pages (Shipping: ₹80 / Free > ₹1499, Returns: 5–7 days)
 - Reviews/Lookbook, Search
 
 **Phase 3 — Growth Features (Week 3–4)**
-- Customization/Printing request page, Request Estimate page
+- Customization/Printing request page (deferred by owner, implement in Phase 3), Request Estimate page
 - Discount codes
 - Social commerce links, Size & Fit Guide polish
 
@@ -200,94 +200,98 @@ With no backend database, this has to live as logic against your `products.json`
 
 1. Create the GitHub org + two repos, and the Vercel project (connected to Repo 2).
 2. Scaffold both Next.js apps and get the launcher script running locally.
-3. Define the `products.json` schema (fields: id, name, category, club/country, price, sizes[], stock, images[]) — get this right first since everything else depends on it.
+3. Define the `products.json` schema with the owner's locked taxonomy:
+   - Fields: `id`, `name`, `category` (*Club* / *Country* / *Retro*), `subCategory` (*Sublimation* / *Embroidered* / *Fan Version Set* / *Master Copy* / *Player Version*), `price`, `mrp`, `sizes[]`, `stock`, `images[]`, `description`.
 4. Build the Admin CRUD → JSON pipeline before touching any storefront UI.
-5. Build the storefront in the Phase 1 order above.
+5. Build the storefront in the Phase 1 order above with the confirmed **Olive Green & Gold** colorway.
 
 ---
 
-## 10. Requirements from Owner (Action Checklist to Proceed)
+## 10. Requirements from Owner (Verified Status & Action Checklist)
 
-To begin Phase 0 & Phase 1 development without blockers, the following inputs, decisions, credentials, and assets are required from Jason (the Owner).
+Below is the updated status reflecting the confirmed requirements received from Jason (Owner):
 
 ---
 
 ### 1. Brand Identity & Visual Assets
-- [ ] **Theme Palette Selection:** Review the design themes in `Crown-and-Cross-theme-palette.html` and choose the primary visual direction (e.g., *Pitch Black & Royal Gold*, *Heritage Emerald*, or custom preference).
-- [ ] **Brand Logo & Favicon:** High-resolution vector file (`.svg`) or transparent background PNGs (`.png`) for dark/light backgrounds and mobile header.
-- [ ] **Brand Copy & Manifesto:** 
-  - Confirmation of primary tagline (*"Some wear fashion. We wear football."* vs. *"Wear Your Club. Wear Your Story."*).
-  - Short "Our Story" paragraph for the About Us section.
-- [ ] **Social Media Links:** Official Instagram handle, X (Twitter), TikTok/YouTube channel URLs to link in footer and social wall.
+- [x] **Theme Palette Selection:** Confirmed: **Olive Green & Gold** (rich olive background/accents with elegant warm gold/champagne highlights).
+- [x] **Brand Logo & Favicon:** Confirmed & Provided: [`Crown-and-Cross.jpeg`](Crown-and-Cross.jpeg) (Gold crown insignia above dark olive green shield with gold cross & gold embossed serif logotype). Can be extracted/used for favicon and navbar branding.
+- [ ] **Brand Copy & Manifesto:**
+  - **Tagline:** Confirmed: *"Some wear fashion. We wear football."* / *"Wear Your Club. Wear Your Story."*
+  - **Our Story:** *Pending (Jason to provide by EOD).*
+- [ ] **Social Media Links:** Official Instagram handle, X (Twitter), TikTok/YouTube channel URLs. *(Pending)*
 
 ---
 
 ### 2. Communication & Ordering Channels
-- [ ] **WhatsApp Business Phone Number:** The official business phone number (with country code, e.g., `+91 XXXXXXXXXX`) to receive client carts and auto-formatted order requests via `wa.me` links.
-- [ ] **Customer Support / Orders Email:** Dedicated email address (e.g., `orders@crownandcross.com` or Gmail) for order fallback dispatches (`mailto:`) and customer queries.
-- [ ] **Business Operating Location:** City & State (to display on the Contact page, invoice notes, and shipping estimates).
+- [x] **WhatsApp Business Phone Number:** Confirmed: **`+917695924602`** (Cart dispatches to `https://wa.me/917695924602?text=...`).
+- [x] **Customer Support / Orders Email:** Confirmed: **`crownandcross29@gmail.com`** (Used for `mailto:` fallback & customer inquiries).
+- [x] **Business Operating Location:** Confirmed: **Chennai, Tamil Nadu** (Included in footer, contact, and shipping notes).
 
 ---
 
 ### 3. Payment & UPI Configuration
-- [ ] **UPI Virtual Payment Address (VPA / UPI ID):** Active UPI ID (e.g., `crownandcross@okhdfcbank` or `name@upi`) that will receive customer payments.
-- [ ] **Registered Payee Account Name:** Exact name registered with the UPI bank account (required for the UPI deep link `pn=` parameter so bank apps don't throw fraud warnings).
-- [ ] **Manual Verification Workflow Confirmation:** Confirmation of the order confirmation protocol: customer scans the auto-generated QR code, makes payment, and sends the transaction screenshot via WhatsApp/Email for manual order fulfillment.
+- [x] **UPI Virtual Payment Address (VPA / UPI ID):** Confirmed: **`jasonclement.jm-1@okhdfcbank`**
+- [x] **Registered Payee Account Name:** Confirmed: **`Jason Clement`** (Populates `pn=Jason%20Clement` in `upi://pay` URI).
+- [x] **Manual Verification Workflow Confirmation:** Confirmed: Customer scans client-generated QR code, completes UPI payment with order ID comment, and shares payment screenshot via WhatsApp (`+917695924602`) or email for fulfillment.
 
 ---
 
-### 4. Product Catalog & Media Assets (Initial Seed Data)
-- [ ] **Seed Product List (5–10 items for launch):**
-  - Product Name (e.g., *Real Madrid 23/24 Home Kit*, *Argentina 1986 Maradona Retro*, *Arsenal 03/04 Invincibles*).
-  - Category: **Club**, **Country**, or **Retro**.
-  - Pricing: Regular/MRP and Sale price (in INR ₹).
-  - Available Sizes: (e.g., S, M, L, XL, XXL) and stock status (*In Stock*, *Out of Stock*, *Low Stock*).
-  - Sizing measurements for the Size & Fit Guide (chest width & jersey length in inches/cm).
-- [ ] **Product Photos & Image Hosting:**
-  - High-res kit images (minimum 2–3 photos per product: front view, back view, crest/fabric detail).
-  - Google Drive folder with "Anyone with link can view" sharing permissions containing image files, OR decision to use Cloudinary / Vercel Blob for direct CDN delivery.
+### 4. Product Catalog & Media Assets (Taxonomy Locked)
+- [x] **Product Taxonomy & Structure:**
+  - **Primary Categories:** **Club**, **Country**, **Retro**
+  - **Quality / Sub-Categories:**
+    1. **Sublimation**
+    2. **Embroidered**
+    3. **Fan Version Set**
+    4. **Master Copy**
+    5. **Player Version**
+- [ ] **Seed Product List & Images (3–5 items for initial test):**
+  - Sample kit names, prices (MRP & Selling), sizes (S, M, L, XL, XXL), and stock quantities. *(Pending)*
+  - High-resolution jersey images (Google Drive folder or direct links). *(Pending)*
 
 ---
 
 ### 5. Accounts, Infrastructure & Access
-- [ ] **Central Google Account:** A dedicated Google account created for Crown & Cross (used for GitHub, Vercel, Google Drive/Photos asset storage).
-- [ ] **GitHub Access & Permissions:** Confirmation that the development team has write access to:
-  - `krishnakanthb13/CC-Inventory-Stock` (Private Admin repo)
-  - `krishnakanthb13/CC-Hosting-Public` (Public Storefront repo)
-- [ ] **Vercel Account Access:** Access or invite to the Vercel project connected to `CC-Hosting-Public`.
-- [ ] **Domain Name (Optional for Launch):** Custom domain (e.g., `crownandcross.in` / `crownandcross.com`) if purchased, or confirmation to run on `crown-and-cross.vercel.app` initially.
+- [ ] **Central Google Account:** Confirmed pending account details (to centralize GitHub, Vercel, and Google Drive assets).
+- [ ] **GitHub Access & Permissions:** Verify collaborator/push permissions on `krishnakanthb13/CC-Inventory-Stock` and `krishnakanthb13/CC-Hosting-Public`.
+- [ ] **Vercel Account Access:** Ensure Vercel project is linked to `CC-Hosting-Public` repository.
+- [ ] **Domain Name:** Initially launching on Vercel (`.vercel.app`), custom domain can be mapped later.
 
 ---
 
 ### 6. Customization, Discounts & Estimates
-- [ ] **Custom Name & Number Printing Pricing:**
-  - Cost per printed jersey (e.g., flat +₹199 or +₹299).
-  - Maximum character limit for names (e.g., 12 letters) and numbers (e.g., 2 digits: 00–99).
-  - Lead time / added delivery days for customized orders.
-- [ ] **Launch Discount Codes:** Any starting promotional coupon codes (e.g., `WELCOME10` for 10% off) and rules (e.g., min purchase value).
-- [ ] **Bulk / Team Orders (Request Estimate):** Minimum quantity required to qualify for bulk jersey quotes (e.g., 5+ or 10+ kits).
+- [ ] **Custom Printing / Name & Number:** *Confirmed: Deferred (Owner will implement later in Phase 3).*
+- [ ] **Launch Discount Codes:** Optional promo codes (e.g. `WELCOME10`). *(Pending)*
+- [ ] **Bulk / Team Orders (Request Estimate):** Bulk estimate inquiry form on storefront.
 
 ---
 
-### 7. Store Policies & Legal Terms
-- [ ] **Shipping & Delivery Policy:**
-  - Delivery timelines (e.g., Metro cities: 3–5 business days, Rest of India: 5–8 business days).
-  - Shipping fee structure (e.g., Flat ₹50 shipping, or Free Shipping on orders over ₹1,499).
-- [ ] **Returns, Exchange & Refund Policy:**
-  - Sizing exchange window (e.g., 5 days or 7 days from delivery date).
-  - Conditions (tags intact, unworn, non-customized).
-  - Explicit rule: are personalized/custom printed jerseys non-returnable? (Standard practice is Yes).
-- [ ] **Legal Business Entity Name:** Registered business or trade name (if incorporated) to populate Terms of Service and Privacy Policy.
+### 7. Store Policies & Legal Terms (Confirmed)
+- [x] **Shipping Timelines:**
+  - **Metro Cities:** 3–5 Business Days
+  - **Rest of India:** 5–8 Business Days
+- [x] **Shipping Rates:**
+  - Standard Flat Rate: **₹80**
+  - Free Shipping: **Orders above ₹1,499**
+- [x] **Returns & Exchange Policy:**
+  - **Sizing Exchange Window:** 5–7 days from delivery date.
+  - **Conditions:** Tags intact, unworn, non-customized.
 
 ---
 
-### Quick Priority Summary (What is needed FIRST):
+### Current Status Tracker
 
-| Priority | Item | Required For |
+| Area | Status | Value / Note |
 |---|---|---|
-| 🚨 **P0 (Day 1)** | WhatsApp Number + UPI ID & Payee Name | Core Cart checkout & UPI QR generation |
-| 🚨 **P0 (Day 1)** | 3–5 Sample Products + Photo links | `products.json` schema validation & Admin CRUD |
-| 🟡 **P1 (Week 1)** | Theme Palette choice + Logo SVG/PNG | Brand identity, typography & Storefront layout |
-| 🟡 **P1 (Week 1)** | GitHub & Vercel project permissions | Automated CI/CD pipeline & staging deployment |
-| 🟢 **P2 (Week 2)** | Return, Shipping, and Legal terms | Policy pages & customer trust modules |
-| 🟢 **P2 (Week 2)** | Custom printing pricing & discount codes | Growth & marketing pages |
+| **WhatsApp Order Dispatch** | ✅ Ready | `+917695924602` |
+| **UPI QR Payment** | ✅ Ready | `jasonclement.jm-1@okhdfcbank` (`Jason Clement`) |
+| **Customer Support Email** | ✅ Ready | `crownandcross29@gmail.com` |
+| **Operating Location** | ✅ Ready | Chennai, Tamil Nadu |
+| **Theme Direction** | ✅ Ready | Olive Green & Gold |
+| **Catalog Taxonomy** | ✅ Ready | Club / Country / Retro × 5 Quality Subcategories |
+| **Shipping & Returns Policy** | ✅ Ready | ₹80 (Free > ₹1,499) \| 3–5d Metro, 5–8d Pan-India \| 5–7d Exchanges |
+| **Brand Logo & Insignia** | ✅ Ready | [`Crown-and-Cross.jpeg`](Crown-and-Cross.jpeg) provided |
+| **Our Story Copy** | ⏳ In Progress | Expected by EOD from Jason |
+| **Seed Products & Photos** | ⏳ In Progress | Needed to finalize initial `products.json` catalog |
+| **Customization Module** | ⏸️ Postponed | Deferred to later phase as requested |
