@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Sparkles, CheckCheck, Copy, Download, UploadCloud, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function RawJsonTab({ data, onSave, syncing }) {
   const [jsonString, setJsonString] = useState('');
@@ -18,7 +19,7 @@ export default function RawJsonTab({ data, onSave, syncing }) {
     try {
       const parsed = JSON.parse(jsonString);
       setJsonString(JSON.stringify(parsed, null, 2));
-      setValidationStatus({ valid: true, message: 'Valid JSON format! Beautified successfully.' });
+      setValidationStatus({ valid: true, message: 'Valid JSON format! Beautified with 2-space indentation.' });
     } catch (err) {
       setValidationStatus({ valid: false, message: `Syntax error: ${err.message}` });
     }
@@ -28,14 +29,14 @@ export default function RawJsonTab({ data, onSave, syncing }) {
     try {
       const parsed = JSON.parse(jsonString);
       if (!parsed || typeof parsed !== 'object') {
-        throw new Error('Root must be an object');
+        throw new Error('Root must be a valid JSON object');
       }
       if (!Array.isArray(parsed.products)) {
         throw new Error('Must contain a "products" array');
       }
       setValidationStatus({
         valid: true,
-        message: `Valid! Contains ${parsed.products.length} products, brand "${parsed.brand?.name || 'N/A'}", and ${parsed.categories?.length || 0} categories.`
+        message: `Schema verified: ${parsed.products.length} jerseys, brand "${parsed.brand?.name || 'N/A'}", and ${parsed.categories?.length || 0} categories.`
       });
     } catch (err) {
       setValidationStatus({ valid: false, message: `Validation failed: ${err.message}` });
@@ -80,10 +81,8 @@ export default function RawJsonTab({ data, onSave, syncing }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Action Header Card */}
       <div
+        className="admin-card"
         style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
           padding: '20px 24px',
           display: 'flex',
           alignItems: 'center',
@@ -97,7 +96,7 @@ export default function RawJsonTab({ data, onSave, syncing }) {
             Raw JSON Inspector & Emergency Editor
           </h3>
           <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '3px 0 0 0' }}>
-            Target: <code>CC-Hosting-Public/public/data/products.json</code> — direct live edits and snapshots.
+            Target: <code>CC-Hosting-Public/public/data/products.json</code> — direct validated file mutations and snapshots.
           </p>
         </div>
 
@@ -107,7 +106,7 @@ export default function RawJsonTab({ data, onSave, syncing }) {
             onClick={handleFormat}
             style={actionBtnStyle}
           >
-            ✨ Format
+            <Sparkles size={14} /> Format
           </button>
 
           <button
@@ -115,7 +114,7 @@ export default function RawJsonTab({ data, onSave, syncing }) {
             onClick={handleValidate}
             style={actionBtnStyle}
           >
-            🔍 Validate
+            <CheckCheck size={14} /> Validate
           </button>
 
           <button
@@ -123,7 +122,7 @@ export default function RawJsonTab({ data, onSave, syncing }) {
             onClick={handleCopy}
             style={actionBtnStyle}
           >
-            {copySuccess ? '✓ Copied!' : '📋 Copy All'}
+            <Copy size={14} /> {copySuccess ? 'Copied!' : 'Copy All'}
           </button>
 
           <button
@@ -131,7 +130,7 @@ export default function RawJsonTab({ data, onSave, syncing }) {
             onClick={handleDownload}
             style={actionBtnStyle}
           >
-            💾 Download Backup
+            <Download size={14} /> Download Backup
           </button>
 
           <button
@@ -139,17 +138,23 @@ export default function RawJsonTab({ data, onSave, syncing }) {
             onClick={handleSave}
             disabled={syncing}
             style={{
-              padding: '8px 18px',
+              padding: '9px 18px',
               backgroundColor: 'var(--gold-primary)',
               color: '#0e1410',
               border: 'none',
-              borderRadius: '8px',
+              borderRadius: '9px',
               fontSize: '13px',
               fontWeight: 700,
-              cursor: syncing ? 'not-allowed' : 'pointer'
+              cursor: syncing ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s',
+              opacity: syncing ? 0.7 : 1
             }}
           >
-            {syncing ? 'Pushing...' : '🚀 Push to products.json'}
+            <UploadCloud size={15} />
+            {syncing ? 'Pushing...' : 'Push to products.json'}
           </button>
         </div>
       </div>
@@ -159,7 +164,7 @@ export default function RawJsonTab({ data, onSave, syncing }) {
         <div
           style={{
             padding: '12px 18px',
-            borderRadius: '10px',
+            borderRadius: '12px',
             backgroundColor: validationStatus.valid ? '#143823' : '#7f1d1d',
             border: `1px solid ${validationStatus.valid ? '#22c55e' : '#ef4444'}`,
             color: '#fff',
@@ -167,10 +172,10 @@ export default function RawJsonTab({ data, onSave, syncing }) {
             fontWeight: 600,
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '10px'
           }}
         >
-          <span>{validationStatus.valid ? '✅' : '⚠️'}</span>
+          {validationStatus.valid ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
           <span>{validationStatus.message}</span>
         </div>
       )}
@@ -180,9 +185,9 @@ export default function RawJsonTab({ data, onSave, syncing }) {
         style={{
           background: '#090d0a',
           border: '1px solid var(--border-subtle)',
-          borderRadius: '14px',
+          borderRadius: '16px',
           overflow: 'hidden',
-          boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.6)'
+          boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.7)'
         }}
       >
         <div
@@ -198,8 +203,8 @@ export default function RawJsonTab({ data, onSave, syncing }) {
           <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
             products.json • UTF-8 • {jsonString.length.toLocaleString()} characters
           </span>
-          <span style={{ fontSize: '11px', color: 'var(--gold-primary)' }}>
-            Editable in-place
+          <span style={{ fontSize: '11px', color: 'var(--gold-primary)', fontWeight: 600 }}>
+            Live Editable
           </span>
         </div>
 
@@ -232,13 +237,16 @@ export default function RawJsonTab({ data, onSave, syncing }) {
 }
 
 const actionBtnStyle = {
-  padding: '8px 14px',
+  padding: '9px 15px',
   backgroundColor: 'var(--bg-elevated)',
   border: '1px solid var(--border-active)',
   color: 'var(--text-primary)',
-  borderRadius: '8px',
+  borderRadius: '9px',
   fontSize: '12px',
   fontWeight: 600,
   cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
   transition: 'all 0.2s'
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Crown, MessageSquare, CreditCard, Save, CheckCircle2 } from 'lucide-react';
 
 export default function BrandSettingsTab({ brand, onSave, syncing }) {
   const [formData, setFormData] = useState({
@@ -45,16 +46,22 @@ export default function BrandSettingsTab({ brand, onSave, syncing }) {
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Identity Card */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px 28px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-          <span style={{ fontSize: '20px' }}>🏛️</span>
+      <div className="admin-card" style={{ padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              backgroundColor: 'var(--gold-dim)',
+              border: '1px solid rgba(200, 169, 106, 0.3)',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--gold-primary)'
+            }}
+          >
+            <Crown size={20} />
+          </div>
           <div>
             <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--gold-primary)', margin: 0 }}>
               Brand Identity & Hero Taglines
@@ -108,16 +115,22 @@ export default function BrandSettingsTab({ brand, onSave, syncing }) {
       </div>
 
       {/* Contact & Dispatch Card */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px 28px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-          <span style={{ fontSize: '20px' }}>💬</span>
+      <div className="admin-card" style={{ padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(34, 197, 94, 0.12)',
+              border: '1px solid rgba(34, 197, 94, 0.25)',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--status-instock)'
+            }}
+          >
+            <MessageSquare size={20} />
+          </div>
           <div>
             <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--gold-primary)', margin: 0 }}>
               Communication & Order Channels
@@ -176,16 +189,22 @@ export default function BrandSettingsTab({ brand, onSave, syncing }) {
       </div>
 
       {/* Payment & UPI Card */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px 28px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-          <span style={{ fontSize: '20px' }}>💳</span>
+      <div className="admin-card" style={{ padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(56, 189, 248, 0.12)',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--status-success)'
+            }}
+          >
+            <CreditCard size={20} />
+          </div>
           <div>
             <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--gold-primary)', margin: 0 }}>
               Payment & UPI Dynamic QR Engine
@@ -271,10 +290,12 @@ export default function BrandSettingsTab({ brand, onSave, syncing }) {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            opacity: syncing ? 0.7 : 1
           }}
         >
-          {syncing ? 'Saving to JSON...' : '💾 Save Brand & Store Settings'}
+          <Save size={16} />
+          {syncing ? 'Saving to JSON...' : 'Save Brand & Store Settings'}
         </button>
       </div>
     </form>
@@ -290,5 +311,5 @@ const inputStyle = {
   color: 'var(--text-primary)',
   fontSize: '13px',
   outline: 'none',
-  transition: 'border-color 0.2s'
+  transition: 'border-color 0.2s, box-shadow 0.2s'
 };

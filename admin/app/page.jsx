@@ -5,6 +5,24 @@ import BrandSettingsTab from '../components/BrandSettingsTab';
 import ShippingExchangeTab from '../components/ShippingExchangeTab';
 import TaxonomyTab from '../components/TaxonomyTab';
 import RawJsonTab from '../components/RawJsonTab';
+import {
+  Shirt,
+  Crown,
+  Truck,
+  Tags,
+  FileCode,
+  Plus,
+  RefreshCw,
+  Search,
+  X,
+  Edit3,
+  Trash2,
+  CheckCircle2,
+  AlertCircle,
+  TrendingUp,
+  PackageCheck,
+  AlertTriangle
+} from 'lucide-react';
 
 const DEFAULT_CATEGORIES = ['Club', 'Country', 'Retro'];
 const DEFAULT_SUB_CATEGORIES = [
@@ -372,6 +390,7 @@ export default function AdminPage() {
       {/* Top Notification Toast */}
       {notice && (
         <div
+          className="animate-fade-in"
           style={{
             position: 'fixed',
             top: '20px',
@@ -390,7 +409,7 @@ export default function AdminPage() {
             gap: '10px'
           }}
         >
-          <span>{notice.type === 'error' ? '⚠️' : '✓'}</span>
+          {notice.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
           <span>{notice.msg}</span>
         </div>
       )}
@@ -410,14 +429,15 @@ export default function AdminPage() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <img
-            src="/images/logo.jpeg"
-            alt="Crown & Cross Logo"
+            src="/icon.jpeg"
+            alt="Crown & Cross Emblem"
             style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '10px',
-              border: '1px solid var(--gold-primary)',
-              objectFit: 'cover'
+              width: '52px',
+              height: '52px',
+              borderRadius: '12px',
+              border: '2px solid var(--gold-primary)',
+              objectFit: 'cover',
+              boxShadow: '0 4px 12px rgba(200, 169, 106, 0.2)'
             }}
           />
           <div>
@@ -450,9 +470,12 @@ export default function AdminPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ textAlign: 'right', marginRight: '8px' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block' }}>Live Storefront File</span>
-            <span style={{ fontSize: '12px', color: 'var(--status-instock)', fontWeight: 600 }}>
-              ● Synced {lastSyncTime ? `@ ${lastSyncTime}` : ''}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end', marginTop: '2px' }}>
+              <span className="pulse-dot" />
+              <span style={{ fontSize: '12px', color: 'var(--status-instock)', fontWeight: 600 }}>
+                Synced {lastSyncTime ? `@ ${lastSyncTime}` : ''}
+              </span>
+            </div>
           </div>
 
           <button
@@ -467,10 +490,15 @@ export default function AdminPage() {
               fontSize: '13px',
               fontWeight: 600,
               cursor: syncing ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s'
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s',
+              opacity: syncing ? 0.7 : 1
             }}
           >
-            {syncing ? 'Syncing...' : '🔄 Re-Sync JSON'}
+            <RefreshCw size={14} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+            {syncing ? 'Syncing...' : 'Re-Sync JSON'}
           </button>
 
           <button
@@ -491,10 +519,11 @@ export default function AdminPage() {
               boxShadow: '0 4px 14px rgba(200, 169, 106, 0.25)',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              transition: 'all 0.2s'
             }}
           >
-            <span style={{ fontSize: '16px' }}>+</span> Add New Jersey
+            <Plus size={16} /> Add New Jersey
           </button>
         </div>
       </header>
@@ -514,35 +543,35 @@ export default function AdminPage() {
           onClick={() => setActiveTab('jerseys')}
           style={getTabStyle(activeTab === 'jerseys')}
         >
-          <span>👕</span> Jerseys Catalog ({stats.total})
+          <Shirt size={16} /> Jerseys Catalog ({stats.total})
         </button>
 
         <button
           onClick={() => setActiveTab('brand')}
           style={getTabStyle(activeTab === 'brand')}
         >
-          <span>🏛️</span> Brand & Store Profile
+          <Crown size={16} /> Brand & Store Profile
         </button>
 
         <button
           onClick={() => setActiveTab('shipping')}
           style={getTabStyle(activeTab === 'shipping')}
         >
-          <span>🚚</span> Shipping & Exchanges
+          <Truck size={16} /> Shipping & Exchanges
         </button>
 
         <button
           onClick={() => setActiveTab('taxonomy')}
           style={getTabStyle(activeTab === 'taxonomy')}
         >
-          <span>🏷️</span> Categories & Quality Grades ({availableCategories.length})
+          <Tags size={16} /> Categories & Quality Grades ({availableCategories.length})
         </button>
 
         <button
           onClick={() => setActiveTab('raw')}
           style={getTabStyle(activeTab === 'raw')}
         >
-          <span>💻</span> Raw JSON & Backups
+          <FileCode size={16} /> Raw JSON & Backups
         </button>
       </div>
 
@@ -553,99 +582,118 @@ export default function AdminPage() {
           <div
             style={{
               display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px',
-          marginBottom: '28px'
-        }}
-      >
-        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '18px 20px', borderRadius: '14px' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Total Jerseys
-          </span>
-          <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '6px', color: 'var(--text-primary)' }}>
-            {stats.total}
-          </div>
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Across Club, Country, Retro</span>
-        </div>
-
-        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '18px 20px', borderRadius: '14px' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            In Stock
-          </span>
-          <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '6px', color: 'var(--status-instock)' }}>
-            {stats.inStock}
-          </div>
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Ready for immediate dispatch</span>
-        </div>
-
-        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '18px 20px', borderRadius: '14px' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Low / Out of Stock
-          </span>
-          <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '6px', color: stats.outStock > 0 ? 'var(--status-out)' : 'var(--status-low)' }}>
-            {stats.lowStock + stats.outStock}
-          </div>
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{stats.outStock} completely sold out</span>
-        </div>
-
-        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '18px 20px', borderRadius: '14px' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Total Inventory Value
-          </span>
-          <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '6px', color: 'var(--gold-primary)' }}>
-            ₹{stats.totalValue.toLocaleString('en-IN')}
-          </div>
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Based on retail selling prices</span>
-        </div>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '16px 20px',
-          marginBottom: '24px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '14px',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}
-      >
-        <div style={{ display: 'flex', gap: '12px', flex: '1 1 300px', minWidth: '240px' }}>
-          <input
-            type="text"
-            placeholder="Search jerseys by name, team, or season..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 14px',
-              backgroundColor: 'var(--bg-primary)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '10px',
-              color: 'var(--text-primary)',
-              fontSize: '13px',
-              outline: 'none'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '16px',
+              marginBottom: '28px'
             }}
-          />
-          {search && (
-            <button
-              onClick={() => setSearch('')}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-muted)',
-                cursor: 'pointer',
-                fontSize: '13px'
-              }}
-            >
-              Clear
-            </button>
-          )}
-        </div>
+          >
+            <div className="admin-card" style={{ padding: '20px 22px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  Total Jerseys
+                </span>
+                <Shirt size={16} color="var(--gold-primary)" />
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '8px', color: 'var(--text-primary)' }}>
+                {stats.total}
+              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Across Club, Country, Retro</span>
+            </div>
+
+            <div className="admin-card" style={{ padding: '20px 22px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  In Stock
+                </span>
+                <PackageCheck size={16} color="var(--status-instock)" />
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '8px', color: 'var(--status-instock)' }}>
+                {stats.inStock}
+              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Ready for immediate dispatch</span>
+            </div>
+
+            <div className="admin-card" style={{ padding: '20px 22px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  Low / Out of Stock
+                </span>
+                <AlertTriangle size={16} color={stats.outStock > 0 ? 'var(--status-out)' : 'var(--status-low)'} />
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '8px', color: stats.outStock > 0 ? 'var(--status-out)' : 'var(--status-low)' }}>
+                {stats.lowStock + stats.outStock}
+              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{stats.outStock} completely sold out</span>
+            </div>
+
+            <div className="admin-card" style={{ padding: '20px 22px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  Total Inventory Value
+                </span>
+                <TrendingUp size={16} color="var(--gold-primary)" />
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 800, marginTop: '8px', color: 'var(--gold-primary)' }}>
+                ₹{stats.totalValue.toLocaleString('en-IN')}
+              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Based on retail selling prices</span>
+            </div>
+          </div>
+
+          {/* Filter and Search Bar */}
+          <div
+            className="admin-card"
+            style={{
+              padding: '16px 20px',
+              marginBottom: '24px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '14px',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flex: '1 1 300px', minWidth: '240px', position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none' }}>
+                <Search size={15} color="var(--text-muted)" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search jerseys by name, team, or season..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px 10px 38px',
+                  backgroundColor: 'var(--bg-primary)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '10px',
+                  color: 'var(--text-primary)',
+                  fontSize: '13px',
+                  outline: 'none',
+                  transition: 'border-color 0.2s, box-shadow 0.2s'
+                }}
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
           {/* Category Filter */}
@@ -755,12 +803,11 @@ export default function AdminPage() {
                   return (
                     <tr
                       key={p.id}
+                      className="table-row-hover"
                       style={{
                         borderBottom: '1px solid var(--border-subtle)',
                         transition: 'background 0.15s'
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-elevated)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
                       {/* Jersey Preview & Title */}
                       <td style={{ padding: '14px 20px' }}>
@@ -900,31 +947,40 @@ export default function AdminPage() {
                             onClick={() => openEditModal(p)}
                             style={{
                               padding: '6px 12px',
-                              borderRadius: '7px',
+                              borderRadius: '8px',
                               background: 'var(--bg-elevated)',
                               border: '1px solid var(--border-subtle)',
                               color: 'var(--text-primary)',
                               fontSize: '12px',
                               fontWeight: 600,
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              transition: 'all 0.15s'
                             }}
                           >
-                            Edit
+                            <Edit3 size={13} /> Edit
                           </button>
                           <button
                             onClick={() => setDeleteTarget(p)}
+                            title="Delete Jersey"
                             style={{
                               padding: '6px 10px',
-                              borderRadius: '7px',
-                              background: 'rgba(239, 68, 68, 0.1)',
+                              borderRadius: '8px',
+                              background: 'rgba(239, 68, 68, 0.12)',
                               border: '1px solid rgba(239, 68, 68, 0.3)',
                               color: 'var(--status-out)',
                               fontSize: '12px',
                               fontWeight: 600,
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              transition: 'all 0.15s'
                             }}
                           >
-                            Delete
+                            <Trash2 size={13} /> Delete
                           </button>
                         </div>
                       </td>
@@ -1015,11 +1071,16 @@ export default function AdminPage() {
                   background: 'none',
                   border: 'none',
                   color: 'var(--text-muted)',
-                  fontSize: '20px',
-                  cursor: 'pointer'
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  borderRadius: '6px',
+                  transition: 'color 0.15s ease'
                 }}
               >
-                ✕
+                <X size={20} />
               </button>
             </div>
 
@@ -1374,7 +1435,9 @@ export default function AdminPage() {
               textAlign: 'center'
             }}
           >
-            <div style={{ fontSize: '36px', marginBottom: '12px' }}>⚠️</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: '#ef4444' }}>
+              <AlertTriangle size={36} />
+            </div>
             <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Confirm Deletion</h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
               Are you sure you want to delete <strong>{deleteTarget.name}</strong> from the inventory and storefront JSON?

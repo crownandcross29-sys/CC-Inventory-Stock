@@ -2,7 +2,6 @@
 // Cross-platform local runner for Crown & Cross (Admin + Storefront)
 const { spawn } = require("child_process");
 const path = require("path");
-const isWin = process.platform === "win32";
 
 const rootDir = path.resolve(__dirname, "..");
 const adminDir = path.join(rootDir, "admin");
@@ -15,12 +14,11 @@ console.log("  Admin App:      http://localhost:3000");
 console.log("  Public Store:   http://localhost:3001");
 console.log("=========================================\n");
 
-function run(name, cmd, args, cwd) {
-  const executable = isWin ? `${cmd}.cmd` : cmd;
-  const child = spawn(executable, args, {
+function run(name, command, cwd) {
+  const child = spawn(command, {
     cwd,
     stdio: "inherit",
-    shell: false
+    shell: true
   });
 
   child.on("error", (err) => {
@@ -37,14 +35,36 @@ function run(name, cmd, args, cwd) {
 }
 
 // Start Admin on port 3000
-const adminProcess = run("Admin", "npm", ["run", "dev"], adminDir);
+const adminProcess = run("Admin", "npm run dev", adminDir);
 
 // Start Public Storefront on port 3001
-const publicProcess = run("Storefront", "npm", ["run", "dev"], publicDir);
+const publicProcess = run("Storefront", "npm run dev", publicDir);
 
-process.on("SIGINT", () => {
+const shutdown = () => {
   console.log("\nShutting down Crown & Cross servers...");
-  adminProcess.kill();
-  publicProcess.kill();
+  try {
+    if (process.platform === "win32") {
+      if (adminProcess.pid) {
+        spawn("taskkill", ["/pid", adminProcess.pid, "/T", "/F"], { stdio: "ignore" });
+      }
+      if (publicProcess.pid) {
+        spawn("taskkill", ["/pid", publicProcess.pid, "/T", "/F"], { stdio: "ignore" });
+      }
+    } else {
+      try {
+        if (adminProcess.pid) process.kill(-adminProcess.pid, "SIGTERM");
+      } catch (_) {
+        if (adminProcess.kill) adminProcess.kill("SIGTERM");
+      }
+      try {
+        if (publicProcess.pid) process.kill(-publicProcess.pid, "SIGTERM");
+      } catch (_) {
+        if (publicProcess.kill) publicProcess.kill("SIGTERM");
+      }
+    }
+  } catch (_) {}
   process.exit(0);
-});
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);

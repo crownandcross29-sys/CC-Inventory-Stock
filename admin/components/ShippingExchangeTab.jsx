@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Truck, RotateCcw, Save, Sparkles } from 'lucide-react';
 
 export default function ShippingExchangeTab({ shipping, exchange, onSave, syncing }) {
   const [formData, setFormData] = useState({
@@ -46,23 +47,62 @@ export default function ShippingExchangeTab({ shipping, exchange, onSave, syncin
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Shipping Rates & Meter Card */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px 28px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-          <span style={{ fontSize: '20px' }}>🚚</span>
+      <div className="admin-card" style={{ padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(200, 169, 106, 0.15)',
+              border: '1px solid rgba(200, 169, 106, 0.3)',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--gold-primary)'
+            }}
+          >
+            <Truck size={20} />
+          </div>
           <div>
             <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--gold-primary)', margin: 0 }}>
               Shipping Rules & Free Delivery Meter
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '3px 0 0 0' }}>
-              Directly controls the Cart Drawer free shipping progress bar and checkout totals.
+              Directly controls the Cart Drawer free shipping progress bar and checkout delivery charges.
             </p>
+          </div>
+        </div>
+
+        {/* Live Free Shipping Meter Preview */}
+        <div
+          style={{
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: '12px',
+            padding: '14px 18px',
+            marginBottom: '20px'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Sparkles size={14} color="var(--gold-primary)" />
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                Storefront Cart Drawer Preview
+              </span>
+            </div>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--gold-primary)' }}>
+              Free Pan-India Delivery over ₹{Number(formData.freeShippingThreshold).toLocaleString('en-IN')}
+            </span>
+          </div>
+          <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '999px', overflow: 'hidden' }}>
+            <div
+              style={{
+                width: '70%',
+                height: '100%',
+                background: 'linear-gradient(90deg, #c8a96a, #22c55e)',
+                borderRadius: '999px'
+              }}
+            />
           </div>
         </div>
 
@@ -80,7 +120,7 @@ export default function ShippingExchangeTab({ shipping, exchange, onSave, syncin
               style={inputStyle}
             />
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>
-              Applied when order subtotal is below the free shipping threshold.
+              Charged when cart subtotal is under ₹{formData.freeShippingThreshold}.
             </span>
           </div>
 
@@ -97,7 +137,7 @@ export default function ShippingExchangeTab({ shipping, exchange, onSave, syncin
               style={inputStyle}
             />
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>
-              Triggers &quot;Unlocked Free Pan-India Delivery!&quot; celebration meter in the cart drawer.
+              Orders at or above this value qualify for free pan-India shipping.
             </span>
           </div>
 
@@ -116,7 +156,7 @@ export default function ShippingExchangeTab({ shipping, exchange, onSave, syncin
 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
-              Pan-India / Rest of India Delivery Duration
+              Rest of India Delivery Duration
             </label>
             <input
               type="text"
@@ -130,16 +170,22 @@ export default function ShippingExchangeTab({ shipping, exchange, onSave, syncin
       </div>
 
       {/* Returns & Exchanges Policy Card */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px 28px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-          <span style={{ fontSize: '20px' }}>🔄</span>
+      <div className="admin-card" style={{ padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(234, 179, 8, 0.12)',
+              border: '1px solid rgba(234, 179, 8, 0.25)',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--status-low)'
+            }}
+          >
+            <RotateCcw size={20} />
+          </div>
           <div>
             <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--gold-primary)', margin: 0 }}>
               Sizing Exchange & Returns Policy
@@ -201,10 +247,12 @@ export default function ShippingExchangeTab({ shipping, exchange, onSave, syncin
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            opacity: syncing ? 0.7 : 1
           }}
         >
-          {syncing ? 'Saving to JSON...' : '💾 Save Shipping & Exchange Rules'}
+          <Save size={16} />
+          {syncing ? 'Saving to JSON...' : 'Save Shipping & Exchange Rules'}
         </button>
       </div>
     </form>
@@ -220,5 +268,5 @@ const inputStyle = {
   color: 'var(--text-primary)',
   fontSize: '13px',
   outline: 'none',
-  transition: 'border-color 0.2s'
+  transition: 'border-color 0.2s, box-shadow 0.2s'
 };

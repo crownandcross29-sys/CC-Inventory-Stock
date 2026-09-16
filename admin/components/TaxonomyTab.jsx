@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Tags, Award, Plus, Trash2, Save } from 'lucide-react';
 
 export default function TaxonomyTab({ categories, subCategories, onSave, syncing }) {
   const [catList, setCatList] = useState([]);
@@ -71,7 +72,6 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validate empty names
     for (const c of catList) {
       if (!c.name.trim()) {
         alert('All categories must have a valid name.');
@@ -90,17 +90,23 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Categories Card */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px 28px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '20px' }}>🏷️</span>
+      <div className="admin-card" style={{ padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                backgroundColor: 'rgba(200, 169, 106, 0.15)',
+                border: '1px solid rgba(200, 169, 106, 0.3)',
+                display: 'grid',
+                placeItems: 'center',
+                color: 'var(--gold-primary)'
+              }}
+            >
+              <Tags size={20} />
+            </div>
             <div>
               <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--gold-primary)', margin: 0 }}>
                 Primary Categories ({catList.length})
@@ -115,17 +121,21 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
             type="button"
             onClick={addCategory}
             style={{
-              padding: '8px 16px',
+              padding: '9px 16px',
               backgroundColor: 'var(--bg-elevated)',
               border: '1px solid var(--border-active)',
               color: 'var(--gold-primary)',
-              borderRadius: '8px',
+              borderRadius: '9px',
               fontSize: '12px',
-              fontWeight: 600,
-              cursor: 'pointer'
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
             }}
           >
-            + Add Category
+            <Plus size={14} /> Add Category
           </button>
         </div>
 
@@ -140,12 +150,13 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
                 alignItems: 'center',
                 background: 'var(--bg-primary)',
                 padding: '12px 16px',
-                borderRadius: '10px',
-                border: '1px solid var(--border-subtle)'
+                borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
+                transition: 'border-color 0.2s'
               }}
             >
               <div>
-                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   ID
                 </label>
                 <input
@@ -158,7 +169,7 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
               </div>
 
               <div>
-                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Display Name
                 </label>
                 <input
@@ -172,7 +183,7 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
               </div>
 
               <div>
-                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   URL Slug
                 </label>
                 <input
@@ -188,20 +199,22 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
               <button
                 type="button"
                 onClick={() => removeCategory(index)}
+                title="Remove Category"
                 style={{
                   alignSelf: 'flex-end',
                   padding: '8px 12px',
-                  background: 'rgba(239, 68, 68, 0.15)',
+                  background: 'rgba(239, 68, 68, 0.12)',
                   border: '1px solid rgba(239, 68, 68, 0.3)',
                   color: '#ef4444',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  height: '35px'
+                  display: 'grid',
+                  placeItems: 'center',
+                  height: '37px',
+                  transition: 'background 0.2s'
                 }}
               >
-                ✕
+                <Trash2 size={14} />
               </button>
             </div>
           ))}
@@ -209,17 +222,23 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
       </div>
 
       {/* Quality Sub-Categories Card */}
-      <div
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px 28px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '20px' }}>⭐</span>
+      <div className="admin-card" style={{ padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                backgroundColor: 'rgba(200, 169, 106, 0.15)',
+                border: '1px solid rgba(200, 169, 106, 0.3)',
+                display: 'grid',
+                placeItems: 'center',
+                color: 'var(--gold-primary)'
+              }}
+            >
+              <Award size={20} />
+            </div>
             <div>
               <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--gold-primary)', margin: 0 }}>
                 Quality Grades & Sub-Categories ({subList.length})
@@ -234,17 +253,21 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
             type="button"
             onClick={addSubCategory}
             style={{
-              padding: '8px 16px',
+              padding: '9px 16px',
               backgroundColor: 'var(--bg-elevated)',
               border: '1px solid var(--border-active)',
               color: 'var(--gold-primary)',
-              borderRadius: '8px',
+              borderRadius: '9px',
               fontSize: '12px',
-              fontWeight: 600,
-              cursor: 'pointer'
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
             }}
           >
-            + Add Quality Grade
+            <Plus size={14} /> Add Quality Grade
           </button>
         </div>
 
@@ -259,12 +282,13 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
                 alignItems: 'center',
                 background: 'var(--bg-primary)',
                 padding: '14px 16px',
-                borderRadius: '10px',
-                border: '1px solid var(--border-subtle)'
+                borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
+                transition: 'border-color 0.2s'
               }}
             >
               <div>
-                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Key / ID
                 </label>
                 <input
@@ -277,7 +301,7 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
               </div>
 
               <div>
-                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Grade Name
                 </label>
                 <input
@@ -291,7 +315,7 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
               </div>
 
               <div>
-                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontWeight: 600 }}>
                   Quality Description
                 </label>
                 <input
@@ -306,20 +330,22 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
               <button
                 type="button"
                 onClick={() => removeSubCategory(index)}
+                title="Remove Grade"
                 style={{
                   alignSelf: 'flex-end',
                   padding: '8px 12px',
-                  background: 'rgba(239, 68, 68, 0.15)',
+                  background: 'rgba(239, 68, 68, 0.12)',
                   border: '1px solid rgba(239, 68, 68, 0.3)',
                   color: '#ef4444',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  height: '35px'
+                  display: 'grid',
+                  placeItems: 'center',
+                  height: '37px',
+                  transition: 'background 0.2s'
                 }}
               >
-                ✕
+                <Trash2 size={14} />
               </button>
             </div>
           ))}
@@ -344,10 +370,12 @@ export default function TaxonomyTab({ categories, subCategories, onSave, syncing
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            opacity: syncing ? 0.7 : 1
           }}
         >
-          {syncing ? 'Saving to JSON...' : '💾 Save Categories & Quality Grades'}
+          <Save size={16} />
+          {syncing ? 'Saving to JSON...' : 'Save Categories & Quality Grades'}
         </button>
       </div>
     </form>
@@ -366,11 +394,12 @@ function slugify(text) {
 
 const tableInputStyle = {
   width: '100%',
-  padding: '8px 10px',
+  padding: '9px 12px',
   backgroundColor: 'var(--bg-surface)',
   border: '1px solid var(--border-subtle)',
   borderRadius: '8px',
   color: 'var(--text-primary)',
   fontSize: '12px',
-  outline: 'none'
+  outline: 'none',
+  transition: 'border-color 0.2s, box-shadow 0.2s'
 };

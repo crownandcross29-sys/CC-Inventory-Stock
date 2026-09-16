@@ -60,6 +60,17 @@ button, input, select, textarea {
   font-family: inherit;
 }
 
+/* Accessibility & Focus-Visible Standards */
+:focus-visible {
+  outline: 2px solid var(--gold-primary) !important;
+  outline-offset: 2px !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--gold-primary) !important;
+  box-shadow: 0 0 0 3px rgba(200, 169, 106, 0.18) !important;
+}
+
 .gold-gradient-text {
   background: linear-gradient(135deg, #f7e6c4 0%, #c8a96a 50%, #9f7d3d 100%);
   -webkit-background-clip: text;
@@ -71,6 +82,43 @@ button, input, select, textarea {
   font-family: 'Playfair Display', Georgia, serif;
 }
 
+/* Interactive Card & Button Enhancements */
+.admin-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-card:hover {
+  border-color: var(--border-active);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+}
+
+.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+
+.table-row-hover:hover {
+  background-color: rgba(200, 169, 106, 0.04) !important;
+}
+
+/* Status Pulse indicator */
+@keyframes livePulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 6px var(--status-instock)); }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--status-instock);
+  animation: livePulse 2.4s ease-in-out infinite;
+}
+
 /* Animation utilities */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -78,5 +126,14 @@ button, input, select, textarea {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.25s ease-out forwards;
+  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Reduced Motion Compliance */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
