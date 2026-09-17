@@ -168,3 +168,7 @@ Provides unified deep-linking that guarantees pre-filled recipient phone (`+91 7
 3. **Gesture Navigation:** `JerseyCarousel.jsx` features touch swipe listeners (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with a 45px distance threshold.
 4. **Adaptive Modals:** `UpiModal.jsx` incorporates `maxHeight: '90vh'` and `overflowY: 'auto'` to maintain usability on compact and landscape mobile screens.
 5. **Scroll Management:** Route change scroll-to-top resets and sticky header anchor scroll margins prevent content occlusion.
+6. **Action-Oriented Navigation Labels:** Replaced raw phone number and email text in `Navbar.jsx` and `Footer.jsx` with **"Contact Us"** and **"Email Us"** action hooks with descriptive tooltip metadata.
+7. **Static Accent Styling:** Styled **Retro Kits** (`.retro-highlight`, `.retro-mobile-link`) with a permanent **Vintage Amber** (`#f59e0b`) accent with matching `:hover` rules for consistent visual anchoring.
+8. **Centered Brand Storytelling Layout:** Wrapped the brand emblem and manifesto headings on `/about` in a centered flex column with `clamp(28px, 5vw, 42px)` fluid typography and `objectFit: 'cover'`.
+9. **Trust-Ranked Support Order:** In `Footer.jsx`, hoisted `UPI Payee: Jason Clement` to the #1 position under "Support & Orders" for instantaneous merchant legitimacy.

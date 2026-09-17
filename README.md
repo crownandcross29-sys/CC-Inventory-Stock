@@ -103,6 +103,12 @@ The Crown & Cross Admin Portal (`http://localhost:3000`) provides comprehensive 
    - **Medium Screens (Tablets & Laptops):** Multi-column auto-fit grids and responsive layout transitions.
    - **Small Screens (Mobile Phones):** Fluid single-column collapse (`minmax(min(100%, ...), 1fr)`), touch-swipe carousels, and viewport-safe modals with zero horizontal overflow.
 
+8. **🎨 Storefront Visual & Trust Hierarchy**:
+   - Distinct static **Vintage Amber** (`#f59e0b`) accent for **Retro Kits** navigation.
+   - Action-oriented **"Contact Us"** and **"Email Us"** controls replacing cluttered raw phone and email strings.
+   - High-trust footer architecture prioritizing merchant payee identity (**Jason Clement**) above support links.
+   - Vertically centered brand emblem and manifesto headings on the `/about` story page.
+
 ---
 
 ## 🛠️ Available Scripts
@@ -113,6 +119,17 @@ The Crown & Cross Admin Portal (`http://localhost:3000`) provides comprehensive 
 | `npm run install:all` | Installs dependencies in both `admin/` and `CC-Hosting-Public/` |
 | `npm run dev --prefix admin` | Runs only the Admin dashboard on `:3000` |
 | `npm run build --prefix admin` | Creates an optimized production build for the Admin portal |
+
+---
+
+## 📜 Changelog
+
+### [Unreleased]
+#### Changed
+- **Storefront Navigation**: Streamlined header actions with semantic **Contact Us** button linking directly to WhatsApp.
+- **Storefront Header**: Implemented permanent static **Vintage Amber** (`#f59e0b`) accent on **Retro Kits** link.
+- **Storefront Footer**: Reordered **Support & Orders** column to prioritize **UPI Payee: Jason Clement** at position #1, followed by clean **Contact Us** and **Email Us** links.
+- **Storefront About Page**: Centered the brand logo emblem and manifesto headings using flexbox column alignment and fluid clamp typography.
 
 ---
 
